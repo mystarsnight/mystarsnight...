@@ -1,1 +1,258 @@
-blank
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Colorful HTML Snippet Playground</title>
+  <style>
+    :root {
+      --bg: #0f1021;
+      --card: rgba(255, 255, 255, 0.12);
+      --text: #f7f7ff;
+      --muted: #c7c7e5;
+      --grad1: #6a11cb;
+      --grad2: #2575fc;
+      --grad3: #ff4d6d;
+      --grad4: #f9c74f;
+      --success: #2dd4bf;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, #2a2b6f 0%, transparent 35%),
+        radial-gradient(circle at 90% 20%, #92278f 0%, transparent 40%),
+        linear-gradient(135deg, #0b0c1d, #111232 50%, #161744 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .floating-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(2px);
+      opacity: 0.35;
+      animation: float 14s infinite ease-in-out;
+      background: linear-gradient(135deg, var(--grad2), var(--grad3));
+    }
+
+    .bubble:nth-child(1){ width:120px;height:120px;left:6%;top:14%; animation-delay:0s; }
+    .bubble:nth-child(2){ width:80px;height:80px;left:75%;top:20%; animation-delay:2s; }
+    .bubble:nth-child(3){ width:150px;height:150px;left:54%;top:67%; animation-delay:4s; }
+    .bubble:nth-child(4){ width:95px;height:95px;left:19%;top:72%; animation-delay:1s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-25px) scale(1.08); }
+    }
+
+    .wrap { width: min(1200px, 92%); margin: 2rem auto 4rem; }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-bottom: 0.4rem;
+      background: linear-gradient(90deg, var(--grad4), #fff, #8be9fd);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 6s linear infinite;
+      background-size: 300% 100%;
+    }
+
+    @keyframes shimmer { from { background-position: 0 0; } to { background-position: 300% 0; } }
+
+    .subtitle { color: var(--muted); margin-bottom: 2rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .snippet {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.2);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1rem;
+      transition: transform .35s ease, box-shadow .35s ease;
+      animation: rise .7s ease both;
+    }
+
+    .snippet:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+    h2 { margin: 0 0 .8rem; font-size: 1.1rem; }
+
+    .btns { display: flex; gap: .6rem; flex-wrap: wrap; }
+    button {
+      border: none;
+      color: white;
+      padding: .6rem .9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    button:active { transform: scale(.95); }
+    .btn-primary { background: linear-gradient(90deg, var(--grad1), var(--grad2)); }
+    .btn-danger { background: linear-gradient(90deg, #ff416c, #ff4b2b); }
+    .btn-success { background: linear-gradient(90deg, #11998e, #38ef7d); }
+
+    .tag {
+      display: inline-block;
+      padding: .3rem .6rem;
+      border-radius: 999px;
+      margin: .2rem;
+      font-size: .85rem;
+      background: rgba(255,255,255,.2);
+    }
+
+    .loader {
+      width: 40px; height: 40px;
+      border: 4px solid rgba(255,255,255,.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-top: .5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .progress {
+      height: 12px;
+      background: rgba(255,255,255,.18);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: .6rem;
+    }
+    .progress > div {
+      height: 100%;
+      width: 70%;
+      background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad0c4);
+      animation: movebar 2.2s ease-in-out infinite alternate;
+    }
+    @keyframes movebar { from { width: 30%; } to { width: 90%; } }
+
+    input, select, textarea {
+      width: 100%;
+      margin: .35rem 0;
+      padding: .6rem .7rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(0,0,0,.2);
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: .9rem;
+    }
+    th, td { padding: .5rem; text-align: left; }
+    th { background: rgba(255,255,255,.2); }
+    tr:nth-child(even){ background: rgba(255,255,255,.08); }
+
+    .notification {
+      padding: .7rem .9rem;
+      border-left: 5px solid var(--success);
+      background: rgba(45,212,191,.15);
+      border-radius: 10px;
+      margin-top: .6rem;
+    }
+
+    code {
+      display:block;
+      white-space: pre-wrap;
+      background: rgba(0,0,0,.26);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 10px;
+      padding: .65rem;
+      margin-top: .6rem;
+      color: #d6f8ff;
+      font-size: .8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-bg">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+  </div>
+
+  <main class="wrap">
+    <h1>Colorful Animated HTML Snippets</h1>
+    <p class="subtitle">Copy ideas from each block below: buttons, cards, forms, tables, loaders, alerts, and more.</p>
+
+    <section class="grid">
+      <article class="snippet">
+        <h2>1) Fancy Buttons</h2>
+        <div class="btns">
+          <button class="btn-primary">Primary</button>
+          <button class="btn-success">Success</button>
+          <button class="btn-danger">Danger</button>
+        </div>
+      </article>
+
+      <article class="snippet">
+        <h2>2) Tags / Pills</h2>
+        <span class="tag">#HTML</span>
+        <span class="tag">#CSS</span>
+        <span class="tag">#Animation</span>
+        <span class="tag">#Colorful</span>
+      </article>
+
+      <article class="snippet">
+        <h2>3) Loader</h2>
+        <div class="loader"></div>
+      </article>
+
+      <article class="snippet">
+        <h2>4) Animated Progress Bar</h2>
+        <div class="progress"><div></div></div>
+      </article>
+
+      <article class="snippet">
+        <h2>5) Mini Form</h2>
+        <input placeholder="Your name" />
+        <select><option>Pick a style</option><option>Neon</option><option>Soft</option></select>
+        <textarea rows="3" placeholder="Message..."></textarea>
+      </article>
+
+      <article class="snippet">
+        <h2>6) Data Table</h2>
+        <table>
+          <thead><tr><th>Theme</th><th>Level</th></tr></thead>
+          <tbody>
+            <tr><td>Galaxy</td><td>Easy</td></tr>
+            <tr><td>Neon Pulse</td><td>Medium</td></tr>
+            <tr><td>Aurora</td><td>Hard</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="snippet">
+        <h2>7) Notification Alert</h2>
+        <div class="notification">✅ Saved! Your colorful component is ready.</div>
+      </article>
+
+      <article class="snippet">
+        <h2>8) Copy Example Block</h2>
+        <code>&lt;button class="btn-primary"&gt;Click me&lt;/button&gt;</code>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
