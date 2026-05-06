@@ -3,256 +3,430 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Colorful HTML Snippet Playground</title>
+  <title>MyShopSavings - Smart Product Finder</title>
   <style>
     :root {
-      --bg: #0f1021;
-      --card: rgba(255, 255, 255, 0.12);
-      --text: #f7f7ff;
-      --muted: #c7c7e5;
-      --grad1: #6a11cb;
-      --grad2: #2575fc;
-      --grad3: #ff4d6d;
-      --grad4: #f9c74f;
-      --success: #2dd4bf;
-      --danger: #ef4444;
+      --bg: #07111f;
+      --panel: rgba(255, 255, 255, 0.1);
+      --panel-strong: rgba(255, 255, 255, 0.16);
+      --text: #f8fbff;
+      --muted: #abc0d8;
+      --green: #36f0a0;
+      --teal: #28d8ff;
+      --yellow: #ffd166;
+      --pink: #ff5d8f;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at 10% 10%, #2a2b6f 0%, transparent 35%),
-        radial-gradient(circle at 90% 20%, #92278f 0%, transparent 40%),
-        linear-gradient(135deg, #0b0c1d, #111232 50%, #161744 100%);
-      min-height: 100vh;
+        radial-gradient(circle at 12% 14%, rgba(54, 240, 160, 0.28), transparent 30%),
+        radial-gradient(circle at 80% 8%, rgba(40, 216, 255, 0.24), transparent 32%),
+        radial-gradient(circle at 50% 90%, rgba(255, 93, 143, 0.2), transparent 38%),
+        linear-gradient(135deg, #06101d 0%, #0b1c34 52%, #09111f 100%);
       overflow-x: hidden;
     }
 
-    .floating-bg {
+    .glow {
       position: fixed;
-      inset: 0;
+      border-radius: 999px;
+      filter: blur(4px);
+      opacity: 0.45;
       pointer-events: none;
+      animation: float 16s ease-in-out infinite;
       z-index: -1;
     }
 
-    .bubble {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(2px);
-      opacity: 0.35;
-      animation: float 14s infinite ease-in-out;
-      background: linear-gradient(135deg, var(--grad2), var(--grad3));
-    }
-
-    .bubble:nth-child(1){ width:120px;height:120px;left:6%;top:14%; animation-delay:0s; }
-    .bubble:nth-child(2){ width:80px;height:80px;left:75%;top:20%; animation-delay:2s; }
-    .bubble:nth-child(3){ width:150px;height:150px;left:54%;top:67%; animation-delay:4s; }
-    .bubble:nth-child(4){ width:95px;height:95px;left:19%;top:72%; animation-delay:1s; }
+    .glow:nth-child(1) { width: 160px; height: 160px; left: 6%; top: 55%; background: var(--green); }
+    .glow:nth-child(2) { width: 110px; height: 110px; right: 8%; top: 35%; background: var(--teal); animation-delay: 3s; }
+    .glow:nth-child(3) { width: 90px; height: 90px; left: 42%; top: 14%; background: var(--yellow); animation-delay: 6s; }
 
     @keyframes float {
       0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-25px) scale(1.08); }
+      50% { transform: translateY(-26px) scale(1.08); }
     }
 
-    .wrap { width: min(1200px, 92%); margin: 2rem auto 4rem; }
+    .wrap {
+      width: min(1180px, 92vw);
+      margin: 0 auto;
+      padding: 42px 0 56px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+      min-height: 420px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      color: #d8ffef;
+      background: rgba(54, 240, 160, 0.12);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      margin-bottom: 0.4rem;
-      background: linear-gradient(90deg, var(--grad4), #fff, #8be9fd);
+      margin: 18px 0 14px;
+      font-size: clamp(2.55rem, 6vw, 5.35rem);
+      line-height: 0.94;
+      letter-spacing: -0.07em;
+    }
+
+    h1 span {
+      display: block;
+      background: linear-gradient(90deg, var(--green), var(--teal), #ffffff);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      animation: shimmer 6s linear infinite;
-      background-size: 300% 100%;
     }
 
-    @keyframes shimmer { from { background-position: 0 0; } to { background-position: 300% 0; } }
+    .hero-copy {
+      max-width: 650px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      line-height: 1.65;
+    }
 
-    .subtitle { color: var(--muted); margin-bottom: 2rem; }
+    .search-card, .panel {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.07));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      border-radius: 30px;
+    }
 
-    .grid {
+    .search-card {
+      padding: 24px;
+      transform: rotate(1.5deg);
+    }
+
+    .search-card h2, .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 8px;
+      color: #d9e7f7;
+      font-weight: 700;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: var(--text);
+      background: rgba(0, 0, 0, 0.24);
+      font: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: rgba(54, 240, 160, 0.8);
+      box-shadow: 0 0 0 4px rgba(54, 240, 160, 0.13);
+    }
+
+    .controls {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
     }
 
-    .snippet {
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,.2);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 1rem;
-      transition: transform .35s ease, box-shadow .35s ease;
-      animation: rise .7s ease both;
-    }
-
-    .snippet:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(0,0,0,.3); }
-
-    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-
-    h2 { margin: 0 0 .8rem; font-size: 1.1rem; }
-
-    .btns { display: flex; gap: .6rem; flex-wrap: wrap; }
     button {
-      border: none;
-      color: white;
-      padding: .6rem .9rem;
-      border-radius: 999px;
+      border: 0;
+      border-radius: 18px;
+      padding: 14px 18px;
+      color: #03121b;
+      background: linear-gradient(90deg, var(--green), var(--teal));
+      font: inherit;
+      font-weight: 900;
       cursor: pointer;
-      transition: transform .2s;
+      transition: transform 0.2s, filter 0.2s;
     }
-    button:active { transform: scale(.95); }
-    .btn-primary { background: linear-gradient(90deg, var(--grad1), var(--grad2)); }
-    .btn-danger { background: linear-gradient(90deg, #ff416c, #ff4b2b); }
-    .btn-success { background: linear-gradient(90deg, #11998e, #38ef7d); }
 
-    .tag {
-      display: inline-block;
-      padding: .3rem .6rem;
+    button:hover { transform: translateY(-2px); filter: brightness(1.07); }
+    button:active { transform: translateY(0) scale(0.98); }
+
+    .note {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--green);
+      font-size: 1.45rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 0.78fr 1.22fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel { padding: 22px; }
+
+    .deal {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: center;
+      margin-top: 14px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .deal.best {
+      border-color: rgba(54, 240, 160, 0.62);
+      background: linear-gradient(145deg, rgba(54, 240, 160, 0.18), rgba(40, 216, 255, 0.09));
+    }
+
+    .product-icon {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 1.75rem;
+    }
+
+    .deal h3 { margin: 0 0 5px; }
+    .deal p { margin: 0; color: var(--muted); }
+
+    .price {
+      text-align: right;
+      min-width: 110px;
+    }
+
+    .price strong {
+      display: block;
+      color: #fff;
+      font-size: 1.65rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 6px 10px;
       border-radius: 999px;
-      margin: .2rem;
-      font-size: .85rem;
-      background: rgba(255,255,255,.2);
+      color: #06111d;
+      background: var(--yellow);
+      font-size: 0.8rem;
+      font-weight: 900;
     }
 
-    .loader {
-      width: 40px; height: 40px;
-      border: 4px solid rgba(255,255,255,.2);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-top: .5rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .progress {
-      height: 12px;
-      background: rgba(255,255,255,.18);
+    .meter {
+      height: 10px;
+      margin-top: 10px;
       border-radius: 999px;
       overflow: hidden;
-      margin-top: .6rem;
+      background: rgba(255, 255, 255, 0.12);
     }
-    .progress > div {
+
+    .meter span {
+      display: block;
       height: 100%;
-      width: 70%;
-      background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad0c4);
-      animation: movebar 2.2s ease-in-out infinite alternate;
-    }
-    @keyframes movebar { from { width: 30%; } to { width: 90%; } }
-
-    input, select, textarea {
-      width: 100%;
-      margin: .35rem 0;
-      padding: .6rem .7rem;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(0,0,0,.2);
-      color: white;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--teal));
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 10px;
-      overflow: hidden;
-      font-size: .9rem;
-    }
-    th, td { padding: .5rem; text-align: left; }
-    th { background: rgba(255,255,255,.2); }
-    tr:nth-child(even){ background: rgba(255,255,255,.08); }
-
-    .notification {
-      padding: .7rem .9rem;
-      border-left: 5px solid var(--success);
-      background: rgba(45,212,191,.15);
-      border-radius: 10px;
-      margin-top: .6rem;
+    .steps {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
     }
 
-    code {
-      display:block;
-      white-space: pre-wrap;
-      background: rgba(0,0,0,.26);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 10px;
-      padding: .65rem;
-      margin-top: .6rem;
-      color: #d6f8ff;
-      font-size: .8rem;
+    .step {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--muted);
+    }
+
+    .step strong { color: #fff; }
+
+    @media (max-width: 840px) {
+      header, .layout { grid-template-columns: 1fr; }
+      .search-card { transform: none; }
+      .stats, .controls { grid-template-columns: 1fr; }
+      .deal { grid-template-columns: 1fr; }
+      .price { text-align: left; }
     }
   </style>
 </head>
 <body>
-  <div class="floating-bg">
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-  </div>
+  <div class="glow"></div>
+  <div class="glow"></div>
+  <div class="glow"></div>
 
   <main class="wrap">
-    <h1>Colorful Animated HTML Snippets</h1>
-    <p class="subtitle">Copy ideas from each block below: buttons, cards, forms, tables, loaders, alerts, and more.</p>
-
-    <section class="grid">
-      <article class="snippet">
-        <h2>1) Fancy Buttons</h2>
-        <div class="btns">
-          <button class="btn-primary">Primary</button>
-          <button class="btn-success">Success</button>
-          <button class="btn-danger">Danger</button>
+    <header>
+      <section>
+        <span class="eyebrow">🛒 MyShopSavings deal scout</span>
+        <h1>Paste a link. <span>Find the best product.</span></h1>
+        <p class="hero-copy">
+          MyShopSavings turns a product name or shopping link into a clear buying recommendation. It compares price,
+          shipping, coupon potential, ratings, return windows, and seller trust so shoppers can pick the strongest deal faster.
+        </p>
+        <div class="stats" aria-label="shopping comparison highlights">
+          <div class="stat"><strong>37%</strong><span>sample savings found</span></div>
+          <div class="stat"><strong>9</strong><span>deal signals scored</span></div>
+          <div class="stat"><strong>1</strong><span>best-value pick</span></div>
         </div>
-      </article>
+      </section>
 
-      <article class="snippet">
-        <h2>2) Tags / Pills</h2>
-        <span class="tag">#HTML</span>
-        <span class="tag">#CSS</span>
-        <span class="tag">#Animation</span>
-        <span class="tag">#Colorful</span>
-      </article>
+      <section class="search-card" aria-labelledby="finder-title">
+        <h2 id="finder-title">Try the savings finder</h2>
+        <label for="product-input">Product link or name</label>
+        <textarea id="product-input" rows="4" placeholder="Example: wireless headphones, standing desk, or https://shop.example/product"></textarea>
+        <div class="controls">
+          <div>
+            <label for="priority">What matters most?</label>
+            <select id="priority">
+              <option value="value">Best overall value</option>
+              <option value="price">Lowest price</option>
+              <option value="rating">Highest rating</option>
+            </select>
+          </div>
+          <div>
+            <label for="budget">Max budget</label>
+            <input id="budget" type="number" min="10" value="180" />
+          </div>
+        </div>
+        <button id="find-button" type="button">Find My Best Deal</button>
+        <p class="note">Demo results are generated in the browser to show the MyShopSavings experience.</p>
+      </section>
+    </header>
 
-      <article class="snippet">
-        <h2>3) Loader</h2>
-        <div class="loader"></div>
-      </article>
+    <section class="layout">
+      <aside class="panel">
+        <h2>How it works</h2>
+        <div class="steps">
+          <div class="step"><strong>1. Read your product</strong><br />Accepts plain names, messy notes, or product URLs.</div>
+          <div class="step"><strong>2. Compare real buying factors</strong><br />Scores base price, shipping, coupons, rating, seller quality, and returns.</div>
+          <div class="step"><strong>3. Explain the winner</strong><br />Shows why one product is the best pick instead of just sorting by price.</div>
+        </div>
+      </aside>
 
-      <article class="snippet">
-        <h2>4) Animated Progress Bar</h2>
-        <div class="progress"><div></div></div>
-      </article>
-
-      <article class="snippet">
-        <h2>5) Mini Form</h2>
-        <input placeholder="Your name" />
-        <select><option>Pick a style</option><option>Neon</option><option>Soft</option></select>
-        <textarea rows="3" placeholder="Message..."></textarea>
-      </article>
-
-      <article class="snippet">
-        <h2>6) Data Table</h2>
-        <table>
-          <thead><tr><th>Theme</th><th>Level</th></tr></thead>
-          <tbody>
-            <tr><td>Galaxy</td><td>Easy</td></tr>
-            <tr><td>Neon Pulse</td><td>Medium</td></tr>
-            <tr><td>Aurora</td><td>Hard</td></tr>
-          </tbody>
-        </table>
-      </article>
-
-      <article class="snippet">
-        <h2>7) Notification Alert</h2>
-        <div class="notification">✅ Saved! Your colorful component is ready.</div>
-      </article>
-
-      <article class="snippet">
-        <h2>8) Copy Example Block</h2>
-        <code>&lt;button class="btn-primary"&gt;Click me&lt;/button&gt;</code>
-      </article>
+      <section class="panel" aria-live="polite">
+        <h2>Recommended matches</h2>
+        <p class="note" id="summary">Enter a product or paste a link, then run the finder.</p>
+        <div id="results"></div>
+      </section>
     </section>
   </main>
+
+  <script>
+    const input = document.querySelector("#product-input");
+    const priority = document.querySelector("#priority");
+    const budget = document.querySelector("#budget");
+    const button = document.querySelector("#find-button");
+    const results = document.querySelector("#results");
+    const summary = document.querySelector("#summary");
+
+    const stores = [
+      { name: "ValueCart", shipping: 0, rating: 4.4, returns: "30-day returns", trust: 90, coupon: 14 },
+      { name: "QuickBox", shipping: 8, rating: 4.8, returns: "45-day returns", trust: 96, coupon: 6 },
+      { name: "MegaMarket", shipping: 4, rating: 4.6, returns: "60-day returns", trust: 93, coupon: 11 }
+    ];
+
+    function cleanQuery(raw) {
+      const trimmed = raw.trim();
+      if (!trimmed) return "everyday product";
+      if (/^https?:\/\//i.test(trimmed)) {
+        try {
+          const url = new URL(trimmed);
+          return url.pathname.split("/").filter(Boolean).pop()?.replace(/[-_]/g, " ") || url.hostname;
+        } catch {
+          return trimmed;
+        }
+      }
+      return trimmed;
+    }
+
+    function buildDeals(query) {
+      const base = Math.max(35, Math.min(Number(budget.value) || 180, 999));
+      return stores.map((store, index) => {
+        const price = Math.round(base * (0.72 + index * 0.1));
+        const total = price + store.shipping - store.coupon;
+        const ratingBoost = priority.value === "rating" ? store.rating * 10 : store.rating * 5;
+        const priceBoost = priority.value === "price" ? (base - total) * 0.7 : (base - total) * 0.45;
+        const valueScore = Math.round(priceBoost + ratingBoost + store.trust * 0.28 + store.coupon * 1.2);
+        return {
+          ...store,
+          title: `${query} ${index === 0 ? "Essential" : index === 1 ? "Pro" : "Plus"}`,
+          total,
+          price,
+          valueScore: Math.max(1, valueScore)
+        };
+      }).sort((a, b) => b.valueScore - a.valueScore);
+    }
+
+    function render() {
+      const query = cleanQuery(input.value);
+      const deals = buildDeals(query);
+      const best = deals[0];
+      const savings = Math.max(...deals.map(deal => deal.total)) - best.total;
+
+      summary.textContent = `Best match for “${query}”: ${best.title} from ${best.name}, with an estimated $${savings} saved versus the priciest match.`;
+      results.innerHTML = deals.map((deal, index) => `
+        <article class="deal ${index === 0 ? "best" : ""}">
+          <div class="product-icon" aria-hidden="true">${index === 0 ? "🏆" : "📦"}</div>
+          <div>
+            <h3>${deal.title}</h3>
+            <p>${deal.name} · ${deal.rating}★ · ${deal.returns} · $${deal.coupon} coupon · $${deal.shipping} shipping</p>
+            <div class="meter" aria-label="value score ${deal.valueScore}"><span style="width:${Math.min(deal.valueScore, 100)}%"></span></div>
+            ${index === 0 ? "<span class='badge'>Best MyShopSavings pick</span>" : ""}
+          </div>
+          <div class="price">
+            <strong>$${deal.total}</strong>
+            <span>estimated total</span>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    button.addEventListener("click", render);
+    input.value = "noise cancelling headphones";
+    render();
+  </script>
 </body>
 </html>
