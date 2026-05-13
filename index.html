@@ -399,7 +399,26 @@
     .result-card.loss { background: linear-gradient(145deg, #f6203c, #750915); }
     .result-card.minor { background: linear-gradient(145deg, #21d763, #075c2b); }
     .result-card.major { background: linear-gradient(145deg, #ffe95d, #b77700); color: #101010; }
+    .result-card.prize { background: linear-gradient(145deg, #1b2d66, #07101f); }
     .result-card h2 { font-size: clamp(2.1rem, 7vw, 4.3rem); }
+    .choice-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .hint-box {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      color: #dff4ff;
+      background: rgba(79, 209, 255, 0.12);
+      border: 1px solid rgba(79, 209, 255, 0.24);
+      line-height: 1.55;
+    }
+    .hint-box.show { display: block; }
 
     @media (max-width: 900px) {
       .hero,
@@ -477,6 +496,8 @@
             <button id="check-code" type="button">Check Task</button>
             <button id="next-lesson" class="secondary" type="button">Next Lesson</button>
           </div>
+          <button id="stuck-help" class="secondary" type="button">I'm stuck — explain how</button>
+          <div id="hint-box" class="hint-box"></div>
           <div id="learn-feedback" class="feedback" role="status"></div>
         </div>
       </article>
@@ -498,10 +519,6 @@
           <button id="stack-button" type="button">Stack / Space</button>
           <button id="reset-game" class="secondary" type="button">Retry</button>
         </div>
-        <div class="controls-row">
-          <button id="minor-mode" class="secondary" type="button">Minor Run</button>
-          <button id="major-mode" type="button">Major Run</button>
-        </div>
       </div>
 
       <aside class="panel stack-status">
@@ -520,8 +537,8 @@
           <h3>Rules copied into this practice version</h3>
           <p class="stack-note">
             Start with three blocks. If you stop partly off the stack, the row shrinks. If there is no overlap, the screen turns
-            red and shows retry. Choose Minor Run to cash out at the minor line with a green retry screen, or Major Run to pass
-            the minor line and climb to the yellow jackpot retry screen.
+            red and shows retry. When you reach the minor prize line, the cabinet asks if you want the prize. Collecting turns
+            the screen green, but continuing risks the minor prize while you climb for the yellow major jackpot.
           </p>
         </div>
       </aside>
@@ -532,7 +549,11 @@
     <div id="result-card" class="result-card">
       <h2 id="result-title">Result</h2>
       <p id="result-message"></p>
-      <button id="overlay-retry" type="button">Retry</button>
+      <div class="choice-actions">
+        <button id="collect-minor" class="secondary" type="button">Take Minor Prize</button>
+        <button id="continue-major" type="button">Go for Major</button>
+        <button id="overlay-retry" type="button">Retry</button>
+      </div>
     </div>
   </div>
 
@@ -543,56 +564,64 @@
         tags: ["Day 1", "types", "values"],
         body: "Every language has value types. JavaScript starts with primitive values: strings for text, numbers for math, booleans for true/false decisions, null for an intentional empty value, undefined for a missing value, bigint for giant integers, and symbol for unique labels. You learn them by naming data clearly and checking what each value represents before using it.",
         task: "Create a string variable called name and set it to \"Coder\".",
-        answer: /(?:const|let|var)\s+name\s*=\s*["']Coder["']\s*;?/
+        answer: /(?:const|let|var)\s+name\s*=\s*["']Coder["']\s*;?/,
+        hint: "Start with const, let, or var. Then write the exact variable name name, an equals sign, and the text in quotes: Coder."
       },
       {
         title: "Variables and constants",
         tags: ["Day 1", "state", "naming"],
         body: "Variables are labels for values. Use const when the label should not be reassigned and let when it will change later. Good names explain meaning, not just type. A long project becomes easier when score, playerHealth, lessonIndex, and isGameOver tell the next reader what is happening.",
         task: "Create a let variable named score and set it to the number 0.",
-        answer: /let\s+score\s*=\s*0\s*;?/
+        answer: /let\s+score\s*=\s*0\s*;?/,
+        hint: "Use let because the task says the score can be a variable. Type score exactly, then assign the number 0 without quotes."
       },
       {
         title: "Logic and comparisons",
         tags: ["Day 2", "if/else", "operators"],
         body: "Programs make choices with comparisons. Triple equals checks same value and type. Greater-than and less-than compare numbers. Logical AND requires both sides to be true, OR accepts either side, and NOT flips a boolean. Combine them to protect code from bad input before doing work.",
         task: "Write an if statement that checks if score is greater than or equal to 10 and calls win().",
-        answer: /if\s*\(\s*score\s*>=\s*10\s*\)\s*\{?\s*win\s*\(\s*\)\s*;?\s*\}?/
+        answer: /if\s*\(\s*score\s*>=\s*10\s*\)\s*\{?\s*win\s*\(\s*\)\s*;?\s*\}?/,
+        hint: "Put the condition inside parentheses: score >= 10. Inside the if block, call win() with parentheses."
       },
       {
         title: "Loops for repeated work",
         tags: ["Day 3", "loops", "iteration"],
         body: "Loops let one idea run many times. for loops are best when you know the count. while loops are best when you repeat until a condition changes. for...of loops read every item in an array. Always make sure something changes so the loop can end.",
         task: "Write a for loop that starts i at 0 and runs while i is less than 5.",
-        answer: /for\s*\(\s*(?:let|var)\s+i\s*=\s*0\s*;\s*i\s*<\s*5\s*;\s*i\+\+\s*\)/
+        answer: /for\s*\(\s*(?:let|var)\s+i\s*=\s*0\s*;\s*i\s*<\s*5\s*;\s*i\+\+\s*\)/,
+        hint: "A for loop has three parts: start with let i = 0, keep going while i < 5, then increase with i++. Separate the parts with semicolons."
       },
       {
         title: "Functions and return values",
         tags: ["Day 4", "functions", "reuse"],
         body: "Functions package steps into a reusable action. Parameters are inputs. return sends the answer back to the caller. Small functions are easier to test, name, and combine. A good function does one job, such as calculateTotal, moveBlock, or renderLesson.",
         task: "Create a function add that takes a and b and returns a + b.",
-        answer: /function\s+add\s*\(\s*a\s*,\s*b\s*\)\s*\{\s*return\s+a\s*\+\s*b\s*;?\s*\}/s
+        answer: /function\s+add\s*\(\s*a\s*,\s*b\s*\)\s*\{\s*return\s+a\s*\+\s*b\s*;?\s*\}/s,
+        hint: "Name the function add. Put a and b inside the parentheses, then return a + b inside curly braces."
       },
       {
         title: "Arrays, objects, maps, and sets",
         tags: ["Day 5", "data structures", "collections"],
         body: "Arrays keep ordered lists. Objects group named properties. Maps store key/value pairs with any key type. Sets store unique values. Choosing the right structure matters: use an array for rows, an object for one player, a map for lookup tables, and a set for completed lesson IDs.",
         task: "Create an array called prizes containing \"candy\", \"headphones\", and \"console\".",
-        answer: /(?:const|let|var)\s+prizes\s*=\s*\[\s*["']candy["']\s*,\s*["']headphones["']\s*,\s*["']console["']\s*\]\s*;?/
+        answer: /(?:const|let|var)\s+prizes\s*=\s*\[\s*["']candy["']\s*,\s*["']headphones["']\s*,\s*["']console["']\s*\]\s*;?/,
+        hint: "Arrays use square brackets. Put each prize as a quoted string and separate the three strings with commas."
       },
       {
         title: "DOM events and web apps",
         tags: ["Day 6", "DOM", "events"],
         body: "The DOM is the page as JavaScript sees it. Query elements, listen for events, update text, and add classes. Most web apps are a loop: state changes, then render the screen from that state. Buttons, keyboard controls, forms, and timers all become events you can handle.",
         task: "Select an element with the id app and store it in a const called app.",
-        answer: /const\s+app\s*=\s*document\.querySelector\s*\(\s*["']#app["']\s*\)\s*;?/
+        answer: /const\s+app\s*=\s*document\.querySelector\s*\(\s*["']#app["']\s*\)\s*;?/,
+        hint: "Use document.querySelector because you are finding something on the page. An id selector needs a #, so the string is #app."
       },
       {
         title: "Debugging, async, and final projects",
         tags: ["Day 7", "debugging", "projects"],
         body: "Debugging means proving what the code is doing, not guessing. Read errors, log values, test one change at a time, and simplify the problem. Async code waits for timers, files, APIs, or user actions. Final projects combine everything: data, rendering, events, logic, and polish.",
         task: "Write a console.log that prints \"I can build this\".",
-        answer: /console\.log\s*\(\s*["']I can build this["']\s*\)\s*;?/
+        answer: /console\.log\s*\(\s*["']I can build this["']\s*\)\s*;?/,
+        hint: "console.log prints a message. Put the exact sentence inside quotes inside the parentheses."
       }
     ];
 
@@ -606,6 +635,8 @@
     const codeAnswer = document.querySelector("#code-answer");
     const checkCode = document.querySelector("#check-code");
     const nextLesson = document.querySelector("#next-lesson");
+    const stuckHelp = document.querySelector("#stuck-help");
+    const hintBox = document.querySelector("#hint-box");
     const learnFeedback = document.querySelector("#learn-feedback");
 
     let currentLesson = 0;
@@ -634,6 +665,8 @@
       lessonBody.textContent = lesson.body;
       taskText.textContent = lesson.task;
       codeAnswer.value = "";
+      hintBox.textContent = "";
+      hintBox.classList.remove("show");
       learnFeedback.textContent = completed.has(currentLesson) ? "Completed — you can still practice it again." : "";
       learnFeedback.className = completed.has(currentLesson) ? "feedback good" : "feedback";
       renderLessons();
@@ -665,15 +698,20 @@
       renderCurrentLesson();
     });
 
+    stuckHelp.addEventListener("click", () => {
+      const lesson = lessons[currentLesson];
+      hintBox.innerHTML = `<strong>How to think about it:</strong> ${lesson.hint}`;
+      hintBox.classList.add("show");
+    });
+
     const cols = 7;
     const rows = 13;
     const minorRows = new Set([4, 5]);
+    const minorPrizeRow = 5;
     const majorRow = 0;
     const board = document.querySelector("#stack-board");
     const stackButton = document.querySelector("#stack-button");
     const resetGame = document.querySelector("#reset-game");
-    const minorMode = document.querySelector("#minor-mode");
-    const majorMode = document.querySelector("#major-mode");
     const speedLabel = document.querySelector("#speed-label");
     const gameStatus = document.querySelector("#game-status");
     const gameNote = document.querySelector("#game-note");
@@ -681,6 +719,8 @@
     const resultCard = document.querySelector("#result-card");
     const resultTitle = document.querySelector("#result-title");
     const resultMessage = document.querySelector("#result-message");
+    const collectMinor = document.querySelector("#collect-minor");
+    const continueMajor = document.querySelector("#continue-major");
     const overlayRetry = document.querySelector("#overlay-retry");
 
     const cells = [];
@@ -691,8 +731,8 @@
     let dir = 1;
     let timer = null;
     let playing = false;
+    let awaitingPrizeChoice = false;
     let tickMs = 210;
-    let prizeGoal = "major";
 
     function buildBoard() {
       board.innerHTML = "";
@@ -757,25 +797,65 @@
       dir = 1;
       tickMs = 210;
       playing = true;
-      gameStatus.textContent = prizeGoal === "minor" ? "Minor run: reach the green line" : "Major run: pass minor and reach the top";
-      gameNote.textContent = "Press Stack when the moving blocks are where you want them. Keep them centered and overlapping.";
+      awaitingPrizeChoice = false;
+      stackButton.disabled = false;
+      setOverlayButtons("result");
+      gameStatus.textContent = "Stack toward the minor prize";
+      gameNote.textContent = "Press Stack when the moving blocks are where you want them. At the minor prize line, choose Take Prize or Continue.";
       startMoving();
+    }
+
+    function setOverlayButtons(mode) {
+      collectMinor.style.display = mode === "prize" ? "inline-flex" : "none";
+      continueMajor.style.display = mode === "prize" ? "inline-flex" : "none";
+      overlayRetry.style.display = mode === "result" ? "inline-flex" : "none";
     }
 
     function showResult(type, title, message) {
       clearInterval(timer);
       playing = false;
+      awaitingPrizeChoice = false;
       document.body.classList.remove("result-loss", "result-minor", "result-major");
       document.body.classList.add(`result-${type}`);
       resultCard.className = `result-card ${type}`;
       resultTitle.textContent = title;
       resultMessage.textContent = message;
+      setOverlayButtons("result");
       overlay.classList.add("show");
       stackButton.disabled = true;
       setTimeout(() => { stackButton.disabled = false; }, 450);
     }
 
+    function showPrizeChoice() {
+      clearInterval(timer);
+      playing = false;
+      awaitingPrizeChoice = true;
+      resultCard.className = "result-card prize";
+      resultTitle.textContent = "Prize?";
+      resultMessage.textContent = "You reached the minor prize line. Take the minor prize now, or continue upward and risk it all for the major prize.";
+      setOverlayButtons("prize");
+      overlay.classList.add("show");
+      stackButton.disabled = true;
+      gameStatus.textContent = "Minor prize reached — choose";
+      gameNote.textContent = "Real Stacker machines ask at the minor level: take the prize or keep playing for major.";
+    }
+
+    function continueAfterMinor() {
+      if (!awaitingPrizeChoice) return;
+      awaitingPrizeChoice = false;
+      overlay.classList.remove("show");
+      row -= 1;
+      pos = 0;
+      dir = 1;
+      tickMs = Math.max(72, tickMs - 14);
+      stackButton.disabled = false;
+      gameStatus.textContent = "Going for major — no minor safety now";
+      gameNote.textContent = "You continued past the minor prize. If you miss before the top, the run ends with no prize.";
+      startMoving();
+    }
+
     function stackCurrentRow() {
+      if (awaitingPrizeChoice) return;
       if (!playing) {
         resetStacker();
         return;
@@ -808,9 +888,8 @@
         return;
       }
 
-      if (prizeGoal === "minor" && minorRows.has(row)) {
-        gameStatus.textContent = "Minor prize won";
-        showResult("minor", "Minor Prize!", "Green screen: you reached the minor prize zone. Claim candy, tickets, or headphones, then retry.");
+      if (row === minorPrizeRow) {
+        showPrizeChoice();
         return;
       }
 
@@ -825,8 +904,8 @@
 
     stackButton.addEventListener("click", stackCurrentRow);
     resetGame.addEventListener("click", resetStacker);
-    minorMode.addEventListener("click", () => { prizeGoal = "minor"; resetStacker(); });
-    majorMode.addEventListener("click", () => { prizeGoal = "major"; resetStacker(); });
+    collectMinor.addEventListener("click", () => showResult("minor", "Minor Prize!", "Green screen: you collected the minor prize. Enjoy candy, tickets, or headphones, then retry."));
+    continueMajor.addEventListener("click", continueAfterMinor);
     overlayRetry.addEventListener("click", resetStacker);
     document.addEventListener("keydown", event => {
       if (event.code === "Space") {
