@@ -24,7 +24,8 @@
     body {
       margin: 0;
       min-height: 100vh;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
       background:
@@ -56,12 +57,9 @@
 
     .page {
       width: min(1100px, 94vw);
-      height: 100vh;
+      min-height: 100vh;
       margin: 0 auto;
-      padding: 16px 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      padding: 20px 0 42px;
     }
 
     header {
@@ -130,7 +128,7 @@
 
     .prize-rail {
       display: grid;
-      grid-template-rows: repeat(13, 1fr);
+      grid-template-rows: repeat(var(--rows, 13), 1fr);
       gap: 5px;
       padding: 13px 0;
     }
@@ -162,9 +160,9 @@
     .board {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      grid-template-rows: repeat(13, 1fr);
+      grid-template-rows: repeat(var(--rows, 13), 1fr);
       gap: 5px;
-      aspect-ratio: 7 / 13;
+      aspect-ratio: 7 / var(--rows, 13);
       padding: 10px;
       border: 6px solid #080808;
       border-radius: 12px;
@@ -226,9 +224,20 @@
       grid-template-columns: 1fr;
     }
 
-    .hard-on {
+    .hard-on,
+    .devil-on {
       background: linear-gradient(180deg, #ffef66, #ff3a22);
       box-shadow: 0 6px 0 #6f1208;
+    }
+
+    .life-panel {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      color: #ffffff;
+      background: rgba(0,0,0,0.38);
+      font-weight: 900;
+      text-align: center;
     }
 
     .panel {
@@ -428,6 +437,7 @@
         </div>
         <div class="mode-row">
           <button id="hard-mode" type="button">Hard Mode Off</button>
+          <button id="devil-mode" type="button">👿 Mode Off</button>
         </div>
       </div>
 
@@ -443,7 +453,9 @@
           <li><strong>Miss:</strong> No overlap means retry.</li>
           <li><strong>Minor:</strong> After minor, the stack becomes two blocks.</li>
           <li><strong>Top:</strong> Three rows before major, the stack becomes one block.</li>
+          <li><strong>👿 Mode:</strong> More levels and three lives.</li>
         </ul>
+        <div id="life-panel" class="life-panel">Lives: 0</div>
       </aside>
     </section>
   </main>
@@ -468,11 +480,13 @@
 
   <script>
     const cols = 7;
-    const rows = 13;
-    const minorRows = new Set([4, 5]);
-    const minorPrizeRow = 5;
+    const normalRows = 13;
+    const devilRows = 18;
     const majorRow = 0;
-    const levelSpeeds = [205, 190, 175, 160, 145, 132, 120, 108, 96, 86, 78, 70, 64];
+    const levelSpeeds = [205, 190, 175, 160, 145, 132, 120, 108, 96, 86, 78, 70, 64, 58, 54, 50, 46, 42];
+    let rows = normalRows;
+    let minorPrizeRow = 5;
+    let minorRows = new Set([4, 5]);
 
     const board = document.querySelector("#board");
     const leftRail = document.querySelector("#left-rail");
@@ -481,10 +495,12 @@
     const retryButton = document.querySelector("#retry-button");
     const headerStart = document.querySelector("#header-start");
     const hardModeButton = document.querySelector("#hard-mode");
+    const devilModeButton = document.querySelector("#devil-mode");
     const speedLabel = document.querySelector("#speed-label");
     const gameStatus = document.querySelector("#game-status");
     const gameStep = document.querySelector("#game-step");
     const gameNote = document.querySelector("#game-note");
+    const lifePanel = document.querySelector("#life-panel");
     const overlay = document.querySelector("#result-overlay");
     const resultCard = document.querySelector("#result-card");
     const resultTitle = document.querySelector("#result-title");
@@ -504,8 +520,23 @@
     let playing = false;
     let waitingForPrizeChoice = false;
     let hardMode = false;
+    let devilMode = false;
+    let lives = 0;
     let majorAnimationTimer = null;
     let tickMs = levelSpeeds[0];
+
+    function configureModeRows() {
+      rows = devilMode ? devilRows : normalRows;
+      minorPrizeRow = devilMode ? 8 : 5;
+      minorRows = devilMode ? new Set([7, 8]) : new Set([4, 5]);
+      board.style.setProperty("--rows", rows);
+      leftRail.style.setProperty("--rows", rows);
+      rightRail.style.setProperty("--rows", rows);
+    }
+
+    function updateLives() {
+      lifePanel.textContent = devilMode ? `Lives: ${lives}` : "Lives: 0";
+    }
 
     function speedForRow(targetRow) {
       const base = levelSpeeds[Math.min(rows - targetRow - 1, levelSpeeds.length - 1)];
@@ -530,6 +561,7 @@
     }
 
     function buildPrizeRails() {
+      configureModeRows();
       const labels = Array.from({ length: rows }, (_, r) => {
         if (r === majorRow) return { text: "MAJOR", cls: "major" };
         if (r === minorPrizeRow) return { text: "MINOR", cls: "minor" };
@@ -543,6 +575,7 @@
 
     function buildBoard() {
       buildPrizeRails();
+      board.style.setProperty("--rows", rows);
       board.innerHTML = "";
       cells.length = 0;
       for (let r = 0; r < rows; r += 1) {
@@ -606,6 +639,7 @@
       stopMajorAnimation();
       document.body.classList.remove("result-loss", "result-minor", "result-major");
       overlay.classList.remove("show");
+      configureModeRows();
       stack = [];
       row = rows - 1;
       width = 3;
@@ -614,13 +648,15 @@
       tickMs = speedForRow(row);
       playing = false;
       waitingForPrizeChoice = false;
+      lives = devilMode ? 3 : 0;
+      updateLives();
       stackButton.disabled = false;
       setOverlayMode("result");
       clearBoard();
       speedLabel.textContent = "Ready";
       gameStatus.textContent = "Ready to play";
       gameStep.textContent = "Press Start / Stack to begin.";
-      gameNote.textContent = "Use clear timing. Hard Mode makes the game two times faster.";
+      gameNote.textContent = devilMode ? "👿 Mode has more levels and three lives." : "Use clear timing. Hard Mode makes the game two times faster.";
     }
 
     function startRun() {
@@ -634,10 +670,12 @@
       dir = 1;
       tickMs = speedForRow(row);
       waitingForPrizeChoice = false;
+      lives = devilMode ? 3 : 0;
+      updateLives();
       stackButton.disabled = false;
       gameStatus.textContent = "Game running";
       gameStep.textContent = "Stop the yellow blocks over the bottom row.";
-      gameNote.textContent = hardMode ? "Hard Mode is on. The blocks move two times faster." : "Keep all three blocks for the best chance to win.";
+      gameNote.textContent = devilMode ? "👿 Mode is on. You have three lives and more levels." : hardMode ? "Hard Mode is on. The blocks move two times faster." : "Keep all three blocks for the best chance to win.";
       startMoving();
     }
 
@@ -712,6 +750,21 @@
         newWidth = overlapEnd - overlapStart;
         newStart = overlapStart;
         if (newWidth <= 0) {
+          if (devilMode && lives > 1) {
+            lives -= 1;
+            updateLives();
+            pos = 0;
+            dir = 1;
+            gameStatus.textContent = "Life lost";
+            gameStep.textContent = `${lives} lives remain. Try this row again.`;
+            gameNote.textContent = "No overlap. Use the next life and line up the blocks.";
+            startMoving();
+            return;
+          }
+          if (devilMode && lives === 1) {
+            lives = 0;
+            updateLives();
+          }
           gameStatus.textContent = "No overlap";
           gameStep.textContent = "Press Retry to play again.";
           showResult("loss", "Retry", "No blocks overlapped the row below. The run is over.");
@@ -760,6 +813,14 @@
         tickMs = speedForRow(row);
         startMoving();
       }
+    });
+
+    devilModeButton.addEventListener("click", () => {
+      devilMode = !devilMode;
+      devilModeButton.textContent = devilMode ? "👿 Mode On" : "👿 Mode Off";
+      devilModeButton.classList.toggle("devil-on", devilMode);
+      buildBoard();
+      resetGame();
     });
     document.addEventListener("keydown", event => {
       if (event.code === "Space") {
