@@ -3,328 +3,122 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Learn/Game Coding Arcade</title>
+  <title>Stacker Arcade Practice</title>
   <style>
     :root {
-      --bg: #070917;
-      --panel: rgba(255, 255, 255, 0.1);
-      --panel-strong: rgba(255, 255, 255, 0.16);
-      --text: #f7fbff;
-      --muted: #aec0d8;
-      --blue: #4fd1ff;
-      --green: #4dff9a;
-      --yellow: #ffe55a;
-      --red: #ff4b5c;
-      --purple: #9b7bff;
-      --orange: #ffb14d;
-      --shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
-      --radius: 28px;
+      --black: #050505;
+      --cabinet-red: #cf1026;
+      --cabinet-yellow: #ffe000;
+      --glass: #101010;
+      --text: #ffffff;
+      --muted: #d8d8d8;
+      --minor: #35e66d;
+      --major: #ffe95a;
+      --moving: #fff200;
+      --locked: #f02234;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
     }
 
     * { box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
-
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at 12% 12%, rgba(79, 209, 255, 0.24), transparent 28%),
-        radial-gradient(circle at 86% 9%, rgba(155, 123, 255, 0.22), transparent 26%),
-        radial-gradient(circle at 48% 100%, rgba(77, 255, 154, 0.16), transparent 34%),
-        linear-gradient(135deg, #070917 0%, #101b3f 48%, #070917 100%);
-      overflow-x: hidden;
+        radial-gradient(circle at top left, rgba(255, 224, 0, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(207, 16, 38, 0.24), transparent 32%),
+        linear-gradient(135deg, #111111, #2a050b 60%, #080808);
     }
 
-    body.result-loss { background: linear-gradient(135deg, #4a0710, #bd1d31 55%, #33040a); }
-    body.result-minor { background: linear-gradient(135deg, #063f1d, #11a84c 55%, #042b15); }
-    body.result-major { background: linear-gradient(135deg, #5f4a00, #ffd500 55%, #6b4a00); color: #101010; }
-    body.result-major .panel,
-    body.result-major .hero-card,
-    body.result-major .arcade { color: var(--text); }
+    body.result-loss { background: #9f0b18; }
+    body.result-minor { background: #008a35; }
+    body.result-major { background: #ffd800; }
 
-    .wrap {
-      width: min(1240px, 94vw);
-      margin: 0 auto;
-      padding: 30px 0 60px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      padding: 16px 0 24px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.1rem;
-      font-weight: 1000;
-      letter-spacing: 0.02em;
-    }
-
-    .brand span {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--blue), var(--purple));
-      box-shadow: 0 12px 34px rgba(79, 209, 255, 0.28);
-    }
-
-    .nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .nav a,
-    button,
-    .tab {
+    button {
       border: 0;
-      border-radius: 999px;
-      padding: 12px 16px;
-      color: #06101d;
-      background: linear-gradient(90deg, var(--green), var(--blue));
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: #080808;
+      background: linear-gradient(180deg, #ffffff, var(--cabinet-yellow));
       font: inherit;
-      font-weight: 1000;
-      text-decoration: none;
+      font-weight: 900;
       cursor: pointer;
-      transition: transform 0.18s, filter 0.18s, box-shadow 0.18s;
+      box-shadow: 0 6px 0 #7a5d00;
+      text-transform: uppercase;
     }
 
-    .nav a:nth-child(2), .secondary { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
-    button:hover, .nav a:hover, .tab:hover { transform: translateY(-2px); filter: brightness(1.08); }
-    button:active, .nav a:active, .tab:active { transform: translateY(0) scale(0.98); }
-    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+    button:hover { filter: brightness(1.06); }
+    button:active { transform: translateY(4px); box-shadow: 0 2px 0 #7a5d00; }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
 
-    .hero {
+    .page {
+      width: min(1100px, 94vw);
+      margin: 0 auto;
+      padding: 28px 0 52px;
+    }
+
+    header {
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 24px;
-      align-items: stretch;
-      min-height: 420px;
-    }
-
-    .hero-card,
-    .panel,
-    .arcade {
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: var(--radius);
-      background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.07));
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
-
-    .hero-card { padding: clamp(24px, 4vw, 46px); }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 13px;
-      border-radius: 999px;
-      color: #dff4ff;
-      background: rgba(79, 209, 255, 0.14);
-      border: 1px solid rgba(79, 209, 255, 0.24);
-      font-weight: 900;
-    }
-
-    h1, h2, h3 { margin: 0; }
-    h1 {
-      margin-top: 18px;
-      font-size: clamp(2.8rem, 7vw, 6.1rem);
-      line-height: 0.9;
-      letter-spacing: -0.075em;
-    }
-
-    h1 span {
-      display: block;
-      color: transparent;
-      background: linear-gradient(90deg, var(--green), var(--blue), #fff);
-      -webkit-background-clip: text;
-      background-clip: text;
-    }
-
-    .hero-copy,
-    .muted,
-    .lesson-card p,
-    .task-text,
-    .stack-note { color: var(--muted); line-height: 1.65; }
-    .hero-copy { max-width: 720px; font-size: 1.08rem; }
-
-    .timeline {
-      display: grid;
-      gap: 12px;
-      padding: 20px;
-    }
-
-    .week-step {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 14px;
-      align-items: start;
-      padding: 15px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.09);
-    }
-
-    .day {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 16px;
-      background: rgba(77, 255, 154, 0.16);
-      color: var(--green);
-      font-weight: 1000;
-    }
-
-    .section-title {
-      display: flex;
-      justify-content: space-between;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
       align-items: end;
-      gap: 14px;
-      margin: 34px 0 16px;
+      margin-bottom: 20px;
     }
 
-    .section-title h2 { font-size: clamp(1.8rem, 4vw, 3.2rem); }
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 8vw, 5.6rem);
+      line-height: 0.9;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+    }
 
-    .learn-grid {
+    .subtitle {
+      margin: 10px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.55;
+    }
+
+    .game-layout {
       display: grid;
-      grid-template-columns: 0.82fr 1.18fr;
-      gap: 20px;
+      grid-template-columns: minmax(340px, 520px) 1fr;
+      gap: 22px;
       align-items: start;
     }
 
-    .panel { padding: 22px; }
-
-    .lesson-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .lesson-card {
-      width: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 20px;
-      padding: 15px;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.08);
-      text-align: left;
-    }
-
-    .lesson-card.active {
-      border-color: rgba(77, 255, 154, 0.7);
-      background: linear-gradient(135deg, rgba(77, 255, 154, 0.18), rgba(79, 209, 255, 0.12));
-    }
-
-    .lesson-card strong { display: block; margin-bottom: 4px; }
-    .lesson-card p { margin: 0; font-size: 0.92rem; }
-
-    .progress-wrap {
-      height: 13px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.12);
-      margin: 14px 0 10px;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--green), var(--blue));
-      transition: width 0.25s;
-    }
-
-    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
-    .pill {
-      display: inline-flex;
-      padding: 7px 10px;
-      border-radius: 999px;
-      color: #06101d;
-      background: var(--yellow);
-      font-size: 0.82rem;
-      font-weight: 1000;
-    }
-
-    .task-box {
-      margin-top: 14px;
-      padding: 16px;
-      border-radius: 22px;
-      background: rgba(0, 0, 0, 0.24);
-      border: 1px solid rgba(255,255,255,0.14);
-    }
-
-    label { display: block; margin: 12px 0 8px; font-weight: 900; }
-    textarea, input {
-      width: 100%;
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 18px;
-      padding: 13px 14px;
-      color: var(--text);
-      background: rgba(0,0,0,0.28);
-      font: inherit;
-      outline: none;
-    }
-
-    textarea { min-height: 120px; resize: vertical; font-family: "Cascadia Code", Consolas, monospace; }
-    textarea:focus, input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(79,209,255,0.12); }
-
-    .feedback {
-      min-height: 28px;
-      margin-top: 12px;
-      font-weight: 900;
-    }
-
-    .feedback.good { color: var(--green); }
-    .feedback.bad { color: var(--red); }
-
-    .arcade-grid {
-      display: grid;
-      grid-template-columns: 0.88fr 1.12fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .stacker-cabinet {
-      position: relative;
-      padding: 18px 18px 22px;
-      border: 9px solid #111;
+    .cabinet {
+      padding: 18px;
+      border: 10px solid #090909;
       border-radius: 30px;
       background:
-        linear-gradient(90deg, #d4162b 0 8%, transparent 8% 92%, #d4162b 92%),
-        linear-gradient(180deg, #ffe528 0 12%, #e0142f 12% 20%, #171717 20% 78%, #e0142f 78% 100%);
-      box-shadow: inset 0 0 0 4px rgba(255,255,255,0.14), 0 30px 70px rgba(0,0,0,0.45);
+        linear-gradient(90deg, var(--cabinet-red) 0 9%, transparent 9% 91%, var(--cabinet-red) 91%),
+        linear-gradient(180deg, var(--cabinet-yellow) 0 12%, var(--cabinet-red) 12% 20%, #161616 20% 78%, var(--cabinet-red) 78% 100%);
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,0.16), var(--shadow);
     }
 
     .marquee {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       gap: 12px;
+      align-items: center;
       margin-bottom: 14px;
       padding: 12px 14px;
-      border: 4px solid #111;
+      border: 4px solid #080808;
       border-radius: 12px;
-      color: #101010;
-      background: linear-gradient(90deg, #fff400, #ffffff 35%, #fff400 70%, #ffb300);
+      color: #090909;
+      background: linear-gradient(90deg, #fff500, #ffffff 40%, #fff500 72%, #ffb000);
       font-weight: 1000;
-      text-transform: uppercase;
       letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .cabinet-window {
+    .window {
       display: grid;
-      grid-template-columns: 54px 1fr 54px;
+      grid-template-columns: 56px 1fr 56px;
       gap: 8px;
       align-items: stretch;
     }
@@ -339,50 +133,58 @@
     .rail-light {
       display: grid;
       place-items: center;
+      border: 2px solid rgba(255,255,255,0.16);
       border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.15);
-      background: #1b1b1b;
-      color: #8b8b8b;
+      background: #1a1a1a;
+      color: #888888;
       font-size: 0.62rem;
       font-weight: 1000;
       text-align: center;
     }
 
-    .rail-light.minor { color: #071a0f; background: var(--green); box-shadow: 0 0 14px rgba(77,255,154,0.55); }
-    .rail-light.major { color: #1d1600; background: var(--yellow); box-shadow: 0 0 16px rgba(255,229,90,0.72); }
+    .rail-light.minor {
+      color: #06130a;
+      background: var(--minor);
+      box-shadow: 0 0 12px rgba(53, 230, 109, 0.65);
+    }
 
-    .stack-board {
-      --cols: 7;
-      --rows: 13;
+    .rail-light.major {
+      color: #211700;
+      background: var(--major);
+      box-shadow: 0 0 14px rgba(255, 233, 90, 0.75);
+    }
+
+    .board {
       display: grid;
-      grid-template-columns: repeat(var(--cols), 1fr);
-      grid-template-rows: repeat(var(--rows), 1fr);
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(13, 1fr);
       gap: 5px;
       aspect-ratio: 7 / 13;
       padding: 13px;
+      border: 6px solid #080808;
       border-radius: 12px;
-      background: #050505;
-      border: 6px solid #111;
-      box-shadow: inset 0 0 24px rgba(255,229,90,0.1), 0 0 0 5px #e4d600;
+      background: var(--glass);
+      box-shadow: 0 0 0 5px var(--cabinet-yellow), inset 0 0 25px rgba(255, 242, 0, 0.08);
     }
 
     .cell {
       border-radius: 4px;
-      background: #151515;
+      background: #1c1c1c;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
     }
 
-    .cell.active { background: #ffe800; box-shadow: 0 0 14px rgba(255,232,0,0.92); }
-    .cell.locked { background: #f41f35; box-shadow: 0 0 12px rgba(244,31,53,0.72); }
-    .cell.minor-line { outline: 2px solid rgba(77,255,154,0.6); }
-    .cell.major-line { outline: 2px solid rgba(255,229,90,0.7); }
-
-    .controls-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 14px;
+    .cell.active {
+      background: var(--moving);
+      box-shadow: 0 0 14px rgba(255, 242, 0, 0.94);
     }
+
+    .cell.locked {
+      background: var(--locked);
+      box-shadow: 0 0 12px rgba(240, 34, 52, 0.72);
+    }
+
+    .cell.minor-line { outline: 2px solid rgba(53, 230, 109, 0.75); }
+    .cell.major-line { outline: 2px solid rgba(255, 233, 90, 0.9); }
 
     .cabinet-controls {
       display: grid;
@@ -391,54 +193,69 @@
       align-items: center;
       margin-top: 14px;
       padding: 12px;
-      border: 4px solid #111;
+      border: 4px solid #080808;
       border-radius: 18px;
-      background: linear-gradient(180deg, #f4cf00, #be111f);
+      background: linear-gradient(180deg, var(--cabinet-yellow), var(--cabinet-red));
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
     .coin-slot {
-      min-width: 92px;
-      padding: 10px;
+      min-width: 90px;
+      padding: 11px 10px;
       border-radius: 12px;
-      color: #f8f8f8;
-      background: #111;
+      color: #ffffff;
+      background: #090909;
       text-align: center;
       font-weight: 1000;
       letter-spacing: 0.08em;
     }
 
-    .exact-step {
-      margin-top: 12px;
-      padding: 12px 14px;
+    .panel {
+      padding: 22px;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 24px;
+      background: rgba(255,255,255,0.09);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .status {
+      margin-bottom: 16px;
+      padding: 16px;
       border-radius: 16px;
-      color: #101010;
-      background: var(--yellow);
+      color: #111111;
+      background: var(--cabinet-yellow);
       font-weight: 1000;
       line-height: 1.45;
     }
 
-    .stack-status {
-      display: grid;
-      gap: 12px;
+    .note {
+      color: var(--muted);
+      line-height: 1.65;
     }
 
-    .prize-grid {
+    .rules {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-top: 12px;
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
     }
 
-    .prize {
-      padding: 14px;
-      border-radius: 18px;
+    .rules li {
+      padding: 12px;
+      border-radius: 14px;
       background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+      line-height: 1.45;
     }
 
-    .prize.major { border-color: rgba(255,229,90,0.46); }
-    .prize.minor { border-color: rgba(77,255,154,0.46); }
-    .prize strong { display: block; font-size: 1.05rem; }
+    .rules strong { color: #ffffff; }
 
     .overlay {
       position: fixed;
@@ -446,173 +263,100 @@
       display: none;
       place-items: center;
       padding: 22px;
-      z-index: 20;
-      background: rgba(0,0,0,0.32);
+      background: rgba(0,0,0,0.38);
+      z-index: 10;
     }
 
     .overlay.show { display: grid; }
+
     .result-card {
-      width: min(560px, 92vw);
-      padding: 28px;
-      border-radius: 30px;
-      text-align: center;
+      width: min(580px, 92vw);
+      padding: 30px;
+      border: 4px solid rgba(255,255,255,0.35);
+      border-radius: 26px;
+      color: #ffffff;
+      background: #111111;
       box-shadow: var(--shadow);
-      border: 2px solid rgba(255,255,255,0.22);
-      color: #fff;
+      text-align: center;
     }
 
-    .result-card.loss { background: linear-gradient(145deg, #f6203c, #750915); }
-    .result-card.minor { background: linear-gradient(145deg, #21d763, #075c2b); }
-    .result-card.major { background: linear-gradient(145deg, #ffe95d, #b77700); color: #101010; }
-    .result-card.prize { background: linear-gradient(145deg, #1b2d66, #07101f); }
-    .result-card h2 { font-size: clamp(2.1rem, 7vw, 4.3rem); }
+    .result-card h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2.3rem, 8vw, 5rem);
+      line-height: 0.9;
+      text-transform: uppercase;
+    }
+
+    .result-card p {
+      margin: 0 0 18px;
+      line-height: 1.6;
+    }
+
+    .result-card.loss { background: #c9142b; }
+    .result-card.minor { background: #008f3b; }
+    .result-card.major { background: #ffd800; color: #101010; }
+    .result-card.prize { background: #17215a; }
+
     .choice-actions {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 12px;
-      margin-top: 18px;
     }
-    .hint-box {
-      display: none;
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 18px;
-      color: #dff4ff;
-      background: rgba(79, 209, 255, 0.12);
-      border: 1px solid rgba(79, 209, 255, 0.24);
-      line-height: 1.55;
-    }
-    .hint-box.show { display: block; }
 
     @media (max-width: 900px) {
-      .hero,
-      .learn-grid,
-      .arcade-grid { grid-template-columns: 1fr; }
-      .topbar { align-items: flex-start; flex-direction: column; }
+      header, .game-layout { grid-template-columns: 1fr; }
+      .window { grid-template-columns: 42px 1fr 42px; }
     }
 
     @media (max-width: 560px) {
-      .controls-row,
-      .prize-grid { grid-template-columns: 1fr; }
-      .wrap { width: min(100% - 24px, 1240px); }
+      .button-row, .cabinet-controls { grid-template-columns: 1fr; }
+      .coin-slot { width: 100%; }
     }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <nav class="topbar" aria-label="main navigation">
-      <div class="brand"><span>⌨️</span> Learn/Game</div>
-      <div class="nav">
-        <a href="#learn">Learn coding</a>
-        <a href="#stacker">Play Stacker</a>
-      </div>
-    </nav>
-
-    <header class="hero">
-      <section class="hero-card">
-        <span class="eyebrow">Two things: Learn + Game</span>
-        <h1>Code for a week. <span>Stack for prizes.</span></h1>
-        <p class="hero-copy">
-          Learn/Game is a browser-only coding bootcamp and arcade practice room. The Learn side gives long, guided lessons
-          on types, variables, logic, functions, arrays, objects, loops, DOM work, debugging, and mini projects with five tasks
-          per day for seven days. The Game side is a Stacker-style practice game: moving blocks slide side to side, you stop
-          them, and only the overlapping blocks survive as you climb toward minor and major prize zones.
+  <main class="page">
+    <header>
+      <div>
+        <h1>Stacker</h1>
+        <p class="subtitle">
+          Practice the arcade stacking game. Start the run, stop each moving row, keep the overlap, and choose whether to take the minor prize or continue for the major prize.
         </p>
-      </section>
-
-      <aside class="hero-card timeline" aria-label="one week coding plan">
-        <div class="week-step"><span class="day">D1</span><div><strong>5 missions · Foundations</strong><br><span class="muted">Syntax, values, strings, numbers, booleans, null, undefined, and comments.</span></div></div>
-        <div class="week-step"><span class="day">D2</span><div><strong>5 missions · Decisions</strong><br><span class="muted">Comparisons, if/else, truthy values, logical operators, and switch statements.</span></div></div>
-        <div class="week-step"><span class="day">D3</span><div><strong>5 missions · Loops</strong><br><span class="muted">for, while, for...of, counters, accumulators, and avoiding infinite loops.</span></div></div>
-        <div class="week-step"><span class="day">D4</span><div><strong>5 missions · Functions</strong><br><span class="muted">Parameters, returns, scope, callbacks, pure functions, and arrow functions.</span></div></div>
-        <div class="week-step"><span class="day">D5</span><div><strong>5 missions · Data</strong><br><span class="muted">Arrays, objects, maps, sets, JSON, destructuring, and safe data access.</span></div></div>
-        <div class="week-step"><span class="day">D6</span><div><strong>5 missions · Web</strong><br><span class="muted">HTML structure, CSS layouts, DOM events, forms, accessibility, and local storage.</span></div></div>
-        <div class="week-step"><span class="day">D7</span><div><strong>5 missions · Build</strong><br><span class="muted">Debugging, refactoring, async basics, fetch, and a final interactive project.</span></div></div>
-      </aside>
+      </div>
+      <button id="header-start" type="button">Start Game</button>
     </header>
 
-    <section id="learn" class="section-title">
-      <div>
-        <span class="eyebrow">Learn</span>
-        <h2>Long coding lessons with type-to-pass tasks</h2>
-      </div>
-      <p class="muted">Complete every typed challenge to fill the progress bar.</p>
-    </section>
-
-    <section class="learn-grid">
-      <aside class="panel">
-        <h2>Week course map</h2>
-        <div class="progress-wrap" aria-label="course progress"><div id="learn-progress" class="progress-bar"></div></div>
-        <p id="progress-text" class="muted">0 of 0 lessons completed.</p>
-        <div id="lesson-list" class="lesson-list"></div>
-      </aside>
-
-      <article class="panel" aria-live="polite">
-        <h2 id="lesson-title">Lesson title</h2>
-        <div id="lesson-tags" class="pill-row"></div>
-        <p id="lesson-body" class="hero-copy"></p>
-        <div class="task-box">
-          <h3>Type the required code</h3>
-          <p id="exact-action" class="exact-step">Do this now: read the task, type the exact code, then press Check Task.</p>
-          <p id="task-text" class="task-text"></p>
-          <label for="code-answer">Your answer</label>
-          <textarea id="code-answer" spellcheck="false" autocomplete="off"></textarea>
-          <div class="controls-row">
-            <button id="check-code" type="button">Check Task</button>
-            <button id="next-lesson" class="secondary" type="button">Next Lesson</button>
-          </div>
-          <button id="stuck-help" class="secondary" type="button">I'm stuck — explain how</button>
-          <div id="hint-box" class="hint-box"></div>
-          <div id="learn-feedback" class="feedback" role="status"></div>
-        </div>
-      </article>
-    </section>
-
-    <section id="stacker" class="section-title">
-      <div>
-        <span class="eyebrow">Game</span>
-        <h2>Stacker prize practice</h2>
-      </div>
-      <p class="muted">Stop each moving row. Miss the overlap and you lose. Reach minor or major zones to win.</p>
-    </section>
-
-    <section class="arcade arcade-grid">
-      <div class="stacker-cabinet">
-        <div class="marquee"><span>Stacker</span><span id="speed-label">Attract Mode</span></div>
-        <div class="cabinet-window">
+    <section class="game-layout" aria-label="Stacker game">
+      <div class="cabinet">
+        <div class="marquee"><span>Stacker</span><span id="speed-label">Ready</span></div>
+        <div class="window">
           <div id="left-rail" class="prize-rail" aria-hidden="true"></div>
-          <div id="stack-board" class="stack-board" aria-label="Stacker game board"></div>
+          <div id="board" class="board" aria-label="Stacker board"></div>
           <div id="right-rail" class="prize-rail" aria-hidden="true"></div>
         </div>
         <div class="cabinet-controls">
-          <div class="controls-row">
-            <button id="stack-button" type="button">Start / Stack / Space</button>
-            <button id="reset-game" class="secondary" type="button">Retry</button>
+          <div class="button-row">
+            <button id="stack-button" type="button">Start / Stack</button>
+            <button id="retry-button" type="button">Retry</button>
           </div>
-          <div class="coin-slot">1 PLAY</div>
+          <div class="coin-slot">1 Play</div>
         </div>
       </div>
 
-      <aside class="panel stack-status">
-        <h2 id="game-status">Press Stack to start</h2>
-        <p class="stack-note" id="game-note">
-          Exact step: press Start/Stack once to begin. Then press Stack only when the yellow blocks are directly above the red blocks below.
+      <aside class="panel">
+        <h2 id="game-status">Ready to play</h2>
+        <div id="game-step" class="status">Press Start / Stack to begin.</div>
+        <p id="game-note" class="note">
+          The yellow blocks move left and right. Press Stack when they are directly above the red blocks below. Blocks that do not overlap are removed.
         </p>
-        <div class="prize-grid" aria-label="prize tiers">
-          <div class="prize minor"><strong>Minor prize row</strong><span>🍬 Candy or arcade tickets</span></div>
-          <div class="prize minor"><strong>Minor prize row</strong><span>🎧 Earbuds or small headphones</span></div>
-          <div class="prize major"><strong>Major prize row</strong><span>🎮 Console practice jackpot</span></div>
-          <div class="prize major"><strong>Major prize row</strong><span>💰 Grand jackpot display</span></div>
-        </div>
-        <div class="task-box">
-          <h3>Rules copied into this practice version</h3>
-          <p class="stack-note">
-            Start with three blocks. The row slides side to side, bounces off the edges, and speeds up each level. When you stop,
-            only the blocks overlapping the row below stay lit. No overlap turns the screen red. The minor line asks Prize? like
-            the real cabinet: take green minor, or keep playing for yellow major.
-          </p>
-        </div>
+        <ul class="rules">
+          <li><strong>Start:</strong> The first row has three moving blocks.</li>
+          <li><strong>Stack:</strong> Each stopped row must overlap the row below it.</li>
+          <li><strong>Miss:</strong> If there is no overlap, the run ends on a red retry screen.</li>
+          <li><strong>Minor prize:</strong> At the minor line, choose Take Minor Prize or Continue.</li>
+          <li><strong>Major prize:</strong> Reach the top line to win the major prize.</li>
+        </ul>
       </aside>
     </section>
   </main>
@@ -622,397 +366,36 @@
       <h2 id="result-title">Result</h2>
       <p id="result-message"></p>
       <div class="choice-actions">
-        <button id="collect-minor" class="secondary" type="button">Take Minor Prize</button>
-        <button id="continue-major" type="button">Go for Major</button>
+        <button id="take-minor" type="button">Take Minor Prize</button>
+        <button id="continue-major" type="button">Continue</button>
         <button id="overlay-retry" type="button">Retry</button>
       </div>
     </div>
   </div>
 
   <script>
-    const lessons = [
-      {
-        title: "1. Values and primitive types",
-        tags: ["Day 1", "types", "values"],
-        body: "A value is one piece of information. JavaScript primitives include string, number, boolean, null, undefined, bigint, and symbol. Before writing logic, decide what kind of value you need and name it clearly.",
-        task: "Do this exactly: create a const called greeting and set it to \"Hello\".",
-        answer: /(?:const)\s+greeting\s*=\s*["\']Hello["\']\s*;?/,
-        hint: "Type const greeting = \"Hello\"; because text values are strings and strings need quotes."
-      },
-      {
-        title: "2. Numbers and math",
-        tags: ["Day 1", "numbers", "operators"],
-        body: "Numbers are used for scores, prices, counts, timers, sizes, and positions. Math operators include +, -, *, /, %, and **. Use numbers without quotes so JavaScript can calculate with them.",
-        task: "Do this exactly: create a const called blocks and set it to 3.",
-        answer: /const\s+blocks\s*=\s*3\s*;?/,
-        hint: "Use const, the name blocks, equals, and the number 3 with no quote marks."
-      },
-      {
-        title: "3. Booleans",
-        tags: ["Day 1", "booleans", "state"],
-        body: "A boolean is only true or false. Use booleans for questions like isPlaying, hasPrize, isGameOver, and answerCorrect. Good boolean names often start with is, has, or can.",
-        task: "Do this exactly: create a let called isPlaying and set it to false.",
-        answer: /let\s+isPlaying\s*=\s*false\s*;?/,
-        hint: "Use let because the value can change later, then assign the boolean false."
-      },
-      {
-        title: "4. Null and undefined",
-        tags: ["Day 1", "empty values", "safe code"],
-        body: "undefined usually means a value has not been set yet. null means you intentionally set the value to empty. Checking for empty values helps you avoid crashes.",
-        task: "Do this exactly: create a let called selectedPrize and set it to null.",
-        answer: /let\s+selectedPrize\s*=\s*null\s*;?/,
-        hint: "Use null when you want to say no prize is selected on purpose."
-      },
-      {
-        title: "5. Comments and readable names",
-        tags: ["Day 1", "comments", "naming"],
-        body: "Comments explain why code exists. Names explain what data means. Prefer playerScore over x and activeLesson over thing. Future you will understand the program faster.",
-        task: "Do this exactly: type a comment that says start the game.",
-        answer: /\/\/\s*start the game\s*/i,
-        hint: "A one-line JavaScript comment starts with two slashes, then the words."
-      },
-      {
-        title: "1. Comparisons",
-        tags: ["Day 2", "logic", "comparison"],
-        body: "Comparisons ask questions. Use === for exact equality, !== for not equal, > and < for size, and >= or <= when the boundary counts.",
-        task: "Do this exactly: write score >= 10",
-        answer: /score\s*>=\s*10\s*;?/,
-        hint: "Use the greater-than sign followed by equals to include 10 itself."
-      },
-      {
-        title: "2. If statements",
-        tags: ["Day 2", "if", "control flow"],
-        body: "An if statement runs code only when a condition is true. Put the condition in parentheses and the action in curly braces.",
-        task: "Do this exactly: if score is at least 10, call win().",
-        answer: /if\s*\(\s*score\s*>=\s*10\s*\)\s*\{\s*win\s*\(\s*\)\s*;?\s*\}/,
-        hint: "Write if (score >= 10) { win(); }."
-      },
-      {
-        title: "3. Else statements",
-        tags: ["Day 2", "else", "branches"],
-        body: "else gives the program a second path when the if condition is false. This is useful for win/lose, pass/fail, and yes/no decisions.",
-        task: "Do this exactly: write an if/else that calls pass() when correct is true and tryAgain() otherwise.",
-        answer: /if\s*\(\s*correct\s*\)\s*\{\s*pass\s*\(\s*\)\s*;?\s*\}\s*else\s*\{\s*tryAgain\s*\(\s*\)\s*;?\s*\}/s,
-        hint: "Use if (correct) for the true path and else for the false path."
-      },
-      {
-        title: "4. Logical AND",
-        tags: ["Day 2", "and", "conditions"],
-        body: "&& means both conditions must be true. It is useful when a player must have enough score and still be alive, or when a form needs multiple valid fields.",
-        task: "Do this exactly: write lives > 0 && score > 100",
-        answer: /lives\s*>\s*0\s*&&\s*score\s*>\s*100\s*;?/,
-        hint: "Put && between the two comparisons."
-      },
-      {
-        title: "5. Logical OR and NOT",
-        tags: ["Day 2", "or", "not"],
-        body: "|| means either condition can be true. ! flips true to false or false to true. These tools let you express rules clearly.",
-        task: "Do this exactly: write !gameOver",
-        answer: /!\s*gameOver\s*;?/,
-        hint: "Put an exclamation mark before gameOver to mean not gameOver."
-      },
-      {
-        title: "1. For loops",
-        tags: ["Day 3", "loops", "repeat"],
-        body: "A for loop repeats a known number of times. It has a start, a condition, and an update.",
-        task: "Do this exactly: create a for loop that starts i at 0 and runs while i < 5.",
-        answer: /for\s*\(\s*(?:let|var)\s+i\s*=\s*0\s*;\s*i\s*<\s*5\s*;\s*i\+\+\s*\)/,
-        hint: "Write for (let i = 0; i < 5; i++)."
-      },
-      {
-        title: "2. While loops",
-        tags: ["Day 3", "while", "conditions"],
-        body: "A while loop repeats until its condition becomes false. Make sure something changes inside or near the loop so it can stop.",
-        task: "Do this exactly: write a while loop that runs while time > 0.",
-        answer: /while\s*\(\s*time\s*>\s*0\s*\)\s*\{?[\s\S]*\}?/,
-        hint: "Start with while (time > 0)."
-      },
-      {
-        title: "3. For...of loops",
-        tags: ["Day 3", "arrays", "iteration"],
-        body: "for...of reads every item in an array without needing an index. It is great for prizes, lessons, rows, and lists of names.",
-        task: "Do this exactly: loop over prizes with for (const prize of prizes).",
-        answer: /for\s*\(\s*const\s+prize\s+of\s+prizes\s*\)/,
-        hint: "Use const prize of prizes inside the parentheses."
-      },
-      {
-        title: "4. Accumulators",
-        tags: ["Day 3", "totals", "patterns"],
-        body: "An accumulator stores a running result, like total points or combined text. Start with an empty value, then update it inside a loop.",
-        task: "Do this exactly: create let total = 0.",
-        answer: /let\s+total\s*=\s*0\s*;?/,
-        hint: "A running number total usually starts at 0."
-      },
-      {
-        title: "5. Break and continue",
-        tags: ["Day 3", "loop control", "flow"],
-        body: "break exits a loop early. continue skips to the next loop turn. Use them when a rule says stop searching or skip invalid data.",
-        task: "Do this exactly: write break;",
-        answer: /break\s*;/,
-        hint: "Type the keyword break followed by a semicolon."
-      },
-      {
-        title: "1. Function declarations",
-        tags: ["Day 4", "functions", "reuse"],
-        body: "Functions are named actions. They make programs easier to read because you can call a clear name instead of repeating steps.",
-        task: "Do this exactly: create a function startGame with an empty body.",
-        answer: /function\s+startGame\s*\(\s*\)\s*\{\s*\}/,
-        hint: "Write function startGame() { }."
-      },
-      {
-        title: "2. Parameters",
-        tags: ["Day 4", "inputs", "functions"],
-        body: "Parameters are input names for a function. A function can receive values, use them, and return a result.",
-        task: "Do this exactly: create a function double that takes number.",
-        answer: /function\s+double\s*\(\s*number\s*\)/,
-        hint: "Put number inside the parentheses."
-      },
-      {
-        title: "3. Return values",
-        tags: ["Day 4", "return", "output"],
-        body: "return sends a value back to the code that called the function. Code after return in the same block does not run.",
-        task: "Do this exactly: return number * 2;",
-        answer: /return\s+number\s*\*\s*2\s*;?/,
-        hint: "Use return, then the multiplication expression."
-      },
-      {
-        title: "4. Arrow functions",
-        tags: ["Day 4", "arrow", "modern js"],
-        body: "Arrow functions are a shorter way to write functions. They are common in event listeners and array methods.",
-        task: "Do this exactly: create const add = (a, b) => a + b;",
-        answer: /const\s+add\s*=\s*\(\s*a\s*,\s*b\s*\)\s*=>\s*a\s*\+\s*b\s*;?/,
-        hint: "Use const add, parentheses for a and b, then => a + b."
-      },
-      {
-        title: "5. Scope",
-        tags: ["Day 4", "scope", "variables"],
-        body: "Scope decides where a variable can be used. Variables inside a function usually stay inside that function, which prevents accidental changes elsewhere.",
-        task: "Do this exactly: inside braces, create const secret = 7.",
-        answer: /\{\s*const\s+secret\s*=\s*7\s*;?\s*\}/,
-        hint: "Put const secret = 7; between curly braces."
-      },
-      {
-        title: "1. Arrays",
-        tags: ["Day 5", "arrays", "lists"],
-        body: "Arrays store ordered lists. Use square brackets, commas, indexes, and methods like push, pop, map, filter, and includes.",
-        task: "Do this exactly: create const prizes = [\"candy\", \"headphones\", \"console\"].",
-        answer: /const\s+prizes\s*=\s*\[\s*["\']candy["\']\s*,\s*["\']headphones["\']\s*,\s*["\']console["\']\s*\]\s*;?/,
-        hint: "Use square brackets and comma-separated strings."
-      },
-      {
-        title: "2. Array indexes",
-        tags: ["Day 5", "indexes", "arrays"],
-        body: "Array indexes start at 0. The first item is array[0], the second is array[1], and so on.",
-        task: "Do this exactly: read the first prize with prizes[0].",
-        answer: /prizes\s*\[\s*0\s*\]\s*;?/,
-        hint: "Use zero inside square brackets."
-      },
-      {
-        title: "3. Objects",
-        tags: ["Day 5", "objects", "properties"],
-        body: "Objects group named facts. Use properties like player.name, player.score, and player.lives to describe one thing.",
-        task: "Do this exactly: create const player = { score: 0 };",
-        answer: /const\s+player\s*=\s*\{\s*score\s*:\s*0\s*\}\s*;?/,
-        hint: "Use curly braces with score: 0 inside."
-      },
-      {
-        title: "4. Destructuring",
-        tags: ["Day 5", "objects", "syntax"],
-        body: "Destructuring pulls values out of arrays or objects into variables. It makes code shorter when you need specific properties.",
-        task: "Do this exactly: create const { score } = player;",
-        answer: /const\s*\{\s*score\s*\}\s*=\s*player\s*;?/,
-        hint: "Put score inside curly braces on the left side."
-      },
-      {
-        title: "5. JSON",
-        tags: ["Day 5", "json", "data"],
-        body: "JSON is a text format for data. Web APIs and localStorage often use JSON.stringify and JSON.parse.",
-        task: "Do this exactly: write JSON.stringify(player).",
-        answer: /JSON\.stringify\s*\(\s*player\s*\)\s*;?/,
-        hint: "Call stringify on JSON and pass player in parentheses."
-      },
-      {
-        title: "1. HTML elements",
-        tags: ["Day 6", "html", "structure"],
-        body: "HTML gives the page structure. Elements like header, main, section, button, and textarea describe the content and controls.",
-        task: "Do this exactly: write <button>Play</button>.",
-        answer: /<button>\s*Play\s*<\/button>/,
-        hint: "Use an opening button tag, the word Play, and a closing button tag."
-      },
-      {
-        title: "2. CSS classes",
-        tags: ["Day 6", "css", "style"],
-        body: "CSS classes let you reuse styles. Add class names in HTML and target them with a dot in CSS.",
-        task: "Do this exactly: write .active { color: yellow; }",
-        answer: /\.active\s*\{\s*color\s*:\s*yellow\s*;?\s*\}/,
-        hint: "A class selector starts with a dot."
-      },
-      {
-        title: "3. Selecting DOM nodes",
-        tags: ["Day 6", "dom", "query"],
-        body: "JavaScript can find page elements with document.querySelector. Use # for ids and . for classes.",
-        task: "Do this exactly: create const app = document.querySelector(\"#app\").",
-        answer: /const\s+app\s*=\s*document\.querySelector\s*\(\s*["\']#app["\']\s*\)\s*;?/,
-        hint: "Pass the id selector #app as a string."
-      },
-      {
-        title: "4. Event listeners",
-        tags: ["Day 6", "events", "interaction"],
-        body: "Events happen when users click, type, submit, or press keys. addEventListener connects a function to an event.",
-        task: "Do this exactly: button.addEventListener(\"click\", startGame);",
-        answer: /button\.addEventListener\s*\(\s*["\']click["\']\s*,\s*startGame\s*\)\s*;?/,
-        hint: "The event name is the string \"click\", followed by the function name."
-      },
-      {
-        title: "5. Local storage",
-        tags: ["Day 6", "storage", "browser"],
-        body: "localStorage saves small strings in the browser. Use it for progress, settings, and simple saved state.",
-        task: "Do this exactly: localStorage.setItem(\"level\", \"1\");",
-        answer: /localStorage\.setItem\s*\(\s*["\']level["\']\s*,\s*["\']1["\']\s*\)\s*;?/,
-        hint: "setItem needs a key string and a value string."
-      },
-      {
-        title: "1. Debug logs",
-        tags: ["Day 7", "debugging", "console"],
-        body: "Debugging means checking what the program is really doing. console.log helps you inspect values while you build.",
-        task: "Do this exactly: console.log(\"debug\");",
-        answer: /console\.log\s*\(\s*["\']debug["\']\s*\)\s*;?/,
-        hint: "Put the word debug in quotes inside console.log."
-      },
-      {
-        title: "2. Try small changes",
-        tags: ["Day 7", "debugging", "process"],
-        body: "When stuck, change one thing at a time. Test the smallest piece so you know what fixed or broke the program.",
-        task: "Do this exactly: create const test = true;",
-        answer: /const\s+test\s*=\s*true\s*;?/,
-        hint: "Use the boolean true without quotes."
-      },
-      {
-        title: "3. Async timers",
-        tags: ["Day 7", "async", "timers"],
-        body: "Timers run code later or repeatedly. setTimeout runs once; setInterval repeats until cleared. Games often use timers for movement.",
-        task: "Do this exactly: setTimeout(startGame, 1000);",
-        answer: /setTimeout\s*\(\s*startGame\s*,\s*1000\s*\)\s*;?/,
-        hint: "Pass the function name first and milliseconds second."
-      },
-      {
-        title: "4. Fetch basics",
-        tags: ["Day 7", "async", "api"],
-        body: "fetch asks for data from a URL and returns a Promise. Real apps use it to load APIs, files, and server responses.",
-        task: "Do this exactly: fetch(\"/api/prizes\");",
-        answer: /fetch\s*\(\s*["\']\/api\/prizes["\']\s*\)\s*;?/,
-        hint: "Call fetch with the URL string."
-      },
-      {
-        title: "5. Final project thinking",
-        tags: ["Day 7", "projects", "planning"],
-        body: "A project combines data, functions, UI, events, and debugging. Plan state first, then render the screen from that state.",
-        task: "Do this exactly: create const state = { playing: false };",
-        answer: /const\s+state\s*=\s*\{\s*playing\s*:\s*false\s*\}\s*;?/,
-        hint: "Use an object with the property playing set to false."
-      }
-    ];
-
-    const lessonList = document.querySelector("#lesson-list");
-    const learnProgress = document.querySelector("#learn-progress");
-    const progressText = document.querySelector("#progress-text");
-    const lessonTitle = document.querySelector("#lesson-title");
-    const lessonTags = document.querySelector("#lesson-tags");
-    const lessonBody = document.querySelector("#lesson-body");
-    const exactAction = document.querySelector("#exact-action");
-    const taskText = document.querySelector("#task-text");
-    const codeAnswer = document.querySelector("#code-answer");
-    const checkCode = document.querySelector("#check-code");
-    const nextLesson = document.querySelector("#next-lesson");
-    const stuckHelp = document.querySelector("#stuck-help");
-    const hintBox = document.querySelector("#hint-box");
-    const learnFeedback = document.querySelector("#learn-feedback");
-
-    let currentLesson = 0;
-    const completed = new Set(JSON.parse(localStorage.getItem("learnGameCompleted") || "[]"));
-
-    function saveProgress() {
-      localStorage.setItem("learnGameCompleted", JSON.stringify([...completed]));
-    }
-
-    function renderLessons() {
-      lessonList.innerHTML = lessons.map((lesson, index) => `
-        <button class="lesson-card ${index === currentLesson ? "active" : ""}" type="button" data-index="${index}">
-          <strong>${completed.has(index) ? "✅" : "⬜"} ${lesson.title}</strong>
-          <p>${lesson.tags.join(" · ")}</p>
-        </button>
-      `).join("");
-      const percent = Math.round((completed.size / lessons.length) * 100);
-      learnProgress.style.width = `${percent}%`;
-      progressText.textContent = `${completed.size} of ${lessons.length} lessons completed. This is built to be practiced over a full week.`;
-    }
-
-    function renderCurrentLesson() {
-      const lesson = lessons[currentLesson];
-      lessonTitle.textContent = lesson.title;
-      lessonTags.innerHTML = lesson.tags.map(tag => `<span class="pill">${tag}</span>`).join("");
-      lessonBody.textContent = lesson.body;
-      exactAction.textContent = `${lesson.title}: ${lesson.task} Then press Check Task.`;
-      taskText.textContent = lesson.task;
-      codeAnswer.value = "";
-      hintBox.textContent = "";
-      hintBox.classList.remove("show");
-      learnFeedback.textContent = completed.has(currentLesson) ? "Completed — you can still practice it again." : "";
-      learnFeedback.className = completed.has(currentLesson) ? "feedback good" : "feedback";
-      renderLessons();
-    }
-
-    lessonList.addEventListener("click", event => {
-      const card = event.target.closest(".lesson-card");
-      if (!card) return;
-      currentLesson = Number(card.dataset.index);
-      renderCurrentLesson();
-    });
-
-    checkCode.addEventListener("click", () => {
-      const lesson = lessons[currentLesson];
-      if (lesson.answer.test(codeAnswer.value.trim())) {
-        completed.add(currentLesson);
-        saveProgress();
-        learnFeedback.textContent = "Correct! You typed the code the task asked for.";
-        learnFeedback.className = "feedback good";
-        renderLessons();
-      } else {
-        learnFeedback.textContent = "Not yet. Match the variable names, punctuation, and requested values exactly.";
-        learnFeedback.className = "feedback bad";
-      }
-    });
-
-    nextLesson.addEventListener("click", () => {
-      currentLesson = (currentLesson + 1) % lessons.length;
-      renderCurrentLesson();
-    });
-
-    stuckHelp.addEventListener("click", () => {
-      const lesson = lessons[currentLesson];
-      hintBox.innerHTML = `<strong>How to think about it:</strong> ${lesson.hint}`;
-      hintBox.classList.add("show");
-    });
-
     const cols = 7;
     const rows = 13;
     const minorRows = new Set([4, 5]);
     const minorPrizeRow = 5;
     const majorRow = 0;
     const levelSpeeds = [205, 190, 175, 160, 145, 132, 120, 108, 96, 86, 78, 70, 64];
-    const board = document.querySelector("#stack-board");
+
+    const board = document.querySelector("#board");
     const leftRail = document.querySelector("#left-rail");
     const rightRail = document.querySelector("#right-rail");
     const stackButton = document.querySelector("#stack-button");
-    const resetGame = document.querySelector("#reset-game");
+    const retryButton = document.querySelector("#retry-button");
+    const headerStart = document.querySelector("#header-start");
     const speedLabel = document.querySelector("#speed-label");
     const gameStatus = document.querySelector("#game-status");
+    const gameStep = document.querySelector("#game-step");
     const gameNote = document.querySelector("#game-note");
     const overlay = document.querySelector("#result-overlay");
     const resultCard = document.querySelector("#result-card");
     const resultTitle = document.querySelector("#result-title");
     const resultMessage = document.querySelector("#result-message");
-    const collectMinor = document.querySelector("#collect-minor");
+    const takeMinor = document.querySelector("#take-minor");
     const continueMajor = document.querySelector("#continue-major");
     const overlayRetry = document.querySelector("#overlay-retry");
 
@@ -1024,8 +407,8 @@
     let dir = 1;
     let timer = null;
     let playing = false;
-    let awaitingPrizeChoice = false;
-    let tickMs = 210;
+    let waitingForPrizeChoice = false;
+    let tickMs = levelSpeeds[0];
 
     function buildPrizeRails() {
       const labels = Array.from({ length: rows }, (_, r) => {
@@ -1059,7 +442,7 @@
       return cells[r * cols + c];
     }
 
-    function clearMoving() {
+    function clearBoard() {
       cells.forEach(cell => cell.classList.remove("active", "locked"));
       stack.forEach(layer => {
         for (let c = layer.start; c < layer.start + layer.width; c += 1) {
@@ -1068,13 +451,19 @@
       });
     }
 
-    function renderStacker() {
-      clearMoving();
+    function setOverlayMode(mode) {
+      takeMinor.style.display = mode === "choice" ? "inline-block" : "none";
+      continueMajor.style.display = mode === "choice" ? "inline-block" : "none";
+      overlayRetry.style.display = mode === "result" ? "inline-block" : "none";
+    }
+
+    function showMovingRow() {
+      clearBoard();
       if (!playing) return;
       for (let c = pos; c < pos + width; c += 1) {
         cellAt(row, c).classList.add("active");
       }
-      speedLabel.textContent = `Level ${rows - row} · ${tickMs}ms`;
+      speedLabel.textContent = `Level ${rows - row}`;
     }
 
     function moveBlock() {
@@ -1083,17 +472,17 @@
         dir *= -1;
         pos = Math.max(0, Math.min(pos, cols - width));
       }
-      renderStacker();
+      showMovingRow();
     }
 
     function startMoving() {
       clearInterval(timer);
       timer = setInterval(moveBlock, tickMs);
       playing = true;
-      renderStacker();
+      showMovingRow();
     }
 
-    function resetStacker() {
+    function resetGame() {
       clearInterval(timer);
       document.body.classList.remove("result-loss", "result-minor", "result-major");
       overlay.classList.remove("show");
@@ -1104,16 +493,17 @@
       dir = 1;
       tickMs = levelSpeeds[0];
       playing = false;
-      awaitingPrizeChoice = false;
+      waitingForPrizeChoice = false;
       stackButton.disabled = false;
-      setOverlayButtons("result");
-      clearMoving();
-      speedLabel.textContent = "Attract Mode";
-      gameStatus.textContent = "Exact step: press Start / Stack";
-      gameNote.textContent = "The game will not run while you are coding. Click the arcade button, or press Space when you are not typing in the code box.";
+      setOverlayMode("result");
+      clearBoard();
+      speedLabel.textContent = "Ready";
+      gameStatus.textContent = "Ready to play";
+      gameStep.textContent = "Press Start / Stack to begin.";
+      gameNote.textContent = "The yellow blocks move left and right. Press Stack when they are directly above the red blocks below.";
     }
 
-    function startStackerRun() {
+    function startRun() {
       document.body.classList.remove("result-loss", "result-minor", "result-major");
       overlay.classList.remove("show");
       stack = [];
@@ -1122,29 +512,24 @@
       pos = 0;
       dir = 1;
       tickMs = levelSpeeds[0];
-      awaitingPrizeChoice = false;
+      waitingForPrizeChoice = false;
       stackButton.disabled = false;
-      gameStatus.textContent = "Exact step: stop the yellow blocks above the bottom row";
-      gameNote.textContent = "Press Stack when the yellow blocks line up. Perfect timing keeps all 3 blocks; hanging blocks are cut off.";
+      gameStatus.textContent = "Game running";
+      gameStep.textContent = "Stop the yellow blocks over the bottom row.";
+      gameNote.textContent = "Press Stack when the blocks line up. Keep all three blocks for the best chance to win.";
       startMoving();
-    }
-
-    function setOverlayButtons(mode) {
-      collectMinor.style.display = mode === "prize" ? "inline-flex" : "none";
-      continueMajor.style.display = mode === "prize" ? "inline-flex" : "none";
-      overlayRetry.style.display = mode === "result" ? "inline-flex" : "none";
     }
 
     function showResult(type, title, message) {
       clearInterval(timer);
       playing = false;
-      awaitingPrizeChoice = false;
+      waitingForPrizeChoice = false;
       document.body.classList.remove("result-loss", "result-minor", "result-major");
       document.body.classList.add(`result-${type}`);
       resultCard.className = `result-card ${type}`;
       resultTitle.textContent = title;
       resultMessage.textContent = message;
-      setOverlayButtons("result");
+      setOverlayMode("result");
       overlay.classList.add("show");
       stackButton.disabled = true;
       setTimeout(() => { stackButton.disabled = false; }, 450);
@@ -1153,35 +538,37 @@
     function showPrizeChoice() {
       clearInterval(timer);
       playing = false;
-      awaitingPrizeChoice = true;
+      waitingForPrizeChoice = true;
       resultCard.className = "result-card prize";
-      resultTitle.textContent = "Prize?";
-      resultMessage.textContent = "Prize? You reached the minor line. Exact choice: Take Minor Prize to stop now, or Go for Major to keep playing and risk losing this run.";
-      setOverlayButtons("prize");
+      resultTitle.textContent = "Prize Choice";
+      resultMessage.textContent = "You reached the minor prize line. Take the minor prize now, or continue and risk the run for the major prize.";
+      setOverlayMode("choice");
       overlay.classList.add("show");
       stackButton.disabled = true;
-      gameStatus.textContent = "Minor prize reached — choose";
-      gameNote.textContent = "Choose now: take the green minor result or continue toward the yellow major result.";
+      gameStatus.textContent = "Minor prize reached";
+      gameStep.textContent = "Choose Take Minor Prize or Continue.";
+      gameNote.textContent = "If you continue and miss, you lose the run.";
     }
 
-    function continueAfterMinor() {
-      if (!awaitingPrizeChoice) return;
-      awaitingPrizeChoice = false;
+    function continueForMajor() {
+      if (!waitingForPrizeChoice) return;
+      waitingForPrizeChoice = false;
       overlay.classList.remove("show");
       row -= 1;
       pos = 0;
       dir = 1;
       tickMs = levelSpeeds[Math.min(rows - row - 1, levelSpeeds.length - 1)];
       stackButton.disabled = false;
-      gameStatus.textContent = "Going for major — no minor safety now";
-      gameNote.textContent = "You continued past the minor prize. If you miss before the top, the run ends with no prize.";
+      gameStatus.textContent = "Going for major";
+      gameStep.textContent = "Stack the next row to keep climbing.";
+      gameNote.textContent = "The speed is higher now. Wait for the blocks to line up before pressing Stack.";
       startMoving();
     }
 
     function stackCurrentRow() {
-      if (awaitingPrizeChoice) return;
+      if (waitingForPrizeChoice) return;
       if (!playing) {
-        startStackerRun();
+        startRun();
         return;
       }
 
@@ -1196,19 +583,21 @@
         newWidth = overlapEnd - overlapStart;
         newStart = overlapStart;
         if (newWidth <= 0) {
-          gameStatus.textContent = "No overlap — game over";
-          showResult("loss", "Retry", "Red screen: you missed the stack, so no prize this run.");
+          gameStatus.textContent = "No overlap";
+          gameStep.textContent = "Press Retry to play again.";
+          showResult("loss", "Retry", "No blocks overlapped the row below. The run is over.");
           return;
         }
       }
 
       stack.push({ row, start: newStart, width: newWidth });
       width = newWidth;
-      clearMoving();
+      clearBoard();
 
       if (row === majorRow) {
         gameStatus.textContent = "Major prize won";
-        showResult("major", "Major Prize!", "Yellow screen: perfect climb to the top. You won the major practice jackpot.");
+        gameStep.textContent = "Press Retry to play again.";
+        showResult("major", "Major Prize", "You reached the top row and won the major prize.");
         return;
       }
 
@@ -1221,27 +610,27 @@
       pos = 0;
       dir = 1;
       tickMs = levelSpeeds[Math.min(rows - row - 1, levelSpeeds.length - 1)];
-      gameStatus.textContent = `Exact step: stack row ${rows - row}; ${width} block${width === 1 ? "" : "s"} remain`;
-      gameNote.textContent = width < 3 ? "Your stack got smaller. Press Stack only when the yellow block is exactly over the red block below." : "Perfect stack! Do the same thing again as the speed increases.";
+      gameStatus.textContent = `Row ${rows - row}`;
+      gameStep.textContent = `${width} block${width === 1 ? "" : "s"} remain. Stack the next row.`;
+      gameNote.textContent = width < 3 ? "Your stack is smaller. Press Stack only when the yellow block is directly over the red block below." : "Perfect stack. Keep the same timing as the speed increases.";
       startMoving();
     }
 
     stackButton.addEventListener("click", stackCurrentRow);
-    resetGame.addEventListener("click", resetStacker);
-    collectMinor.addEventListener("click", () => showResult("minor", "Minor Prize!", "Green screen: you collected the minor prize. Enjoy candy, tickets, or headphones, then retry."));
-    continueMajor.addEventListener("click", continueAfterMinor);
-    overlayRetry.addEventListener("click", resetStacker);
+    headerStart.addEventListener("click", stackCurrentRow);
+    retryButton.addEventListener("click", resetGame);
+    takeMinor.addEventListener("click", () => showResult("minor", "Minor Prize", "You took the minor prize. Press Retry to play again."));
+    continueMajor.addEventListener("click", continueForMajor);
+    overlayRetry.addEventListener("click", resetGame);
     document.addEventListener("keydown", event => {
-      const typingTarget = event.target.closest("textarea, input, [contenteditable='true']");
-      if (event.code === "Space" && !typingTarget) {
+      if (event.code === "Space") {
         event.preventDefault();
         stackCurrentRow();
       }
     });
 
     buildBoard();
-    renderCurrentLesson();
-    resetStacker();
+    resetGame();
   </script>
 </body>
 </html>
