@@ -414,7 +414,7 @@
       const labels = Array.from({ length: rows }, (_, r) => {
         if (r === majorRow) return { text: "MAJOR", cls: "major" };
         if (r === minorPrizeRow) return { text: "MINOR", cls: "minor" };
-        if (minorRows.has(r)) return { text: "MIN", cls: "minor" };
+        if (minorRows.has(r)) return { text: "Minor", cls: "minor" };
         return { text: "", cls: "" };
       });
       const railHtml = labels.map(label => `<div class="rail-light ${label.cls}">${label.text}</div>`).join("");
