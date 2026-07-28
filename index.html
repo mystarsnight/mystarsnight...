@@ -45,6 +45,7 @@ const PREFERRED_MODELS=[
   {id:'Mistral-7B-Instruct-v0.3-q4f16_1-MLC',label:'Verified Mistral 7B, 4573 MB',laggy:true},
   {id:'OpenHermes-2.5-Mistral-7B-q4f16_1-MLC',label:'Verified OpenHermes 2.5 Mistral 7B, 4573 MB',laggy:true}
 ], WEBLLM_LIST=webllm.prebuiltAppConfig?.model_list||[], AVAILABLE_IDS=new Set(WEBLLM_LIST.map(m=>m.model_id)), MODELS=AVAILABLE_IDS.size?PREFERRED_MODELS.filter(m=>AVAILABLE_IDS.has(m.id)):PREFERRED_MODELS, DEFAULT_MODEL=MODELS[0]?.id||'', themes=['dark','amoled','light','blue','green','purple','orange','red'];
+], WEBLLM_LIST=webllm.prebuiltAppConfig?.model_list||[], AVAILABLE_IDS=new Set(WEBLLM_LIST.map(m=>m.model_id)), MODELS=AVAILABLE_IDS.size?PREFERRED_MODELS.filter(m=>AVAILABLE_IDS.has(m.id)):PREFERRED_MODELS, DEFAULT_MODEL='', themes=['dark','amoled','light','blue','green','purple','orange','red'];
 const $=id=>document.getElementById(id), uid=()=>crypto.randomUUID(), now=()=>new Date().toISOString();
 let engine, abort=false, current, conversations=[], searchTerm='', thinkingTimer=null, thinkingStart=0, pendingPrompt='', storageWindowStart=Date.now(), storageBytes=0;
 let settings={model:DEFAULT_MODEL,runMode:'safe',potatoMode:false,hideMessageActions:false,theme:'dark',fontSize:16,temperature:.7,maxTokens:512,autoScroll:true,typingAnimation:true,showTimestamps:true,sound:false,reduceMotion:false,saveConversations:true,sideWidth:310,msgGap:14};
