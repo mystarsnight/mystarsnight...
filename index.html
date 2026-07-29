@@ -1,6 +1,465 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clipboard AI</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      align-items: center;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(125, 92, 246, 0.42), transparent 26%),
+        radial-gradient(circle at 80% 0%, rgba(34, 211, 238, 0.22), transparent 24%),
+        linear-gradient(135deg, #020617 0%, #111827 48%, #312e81 100%);
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    main {
+      background: rgba(2, 6, 23, 0.82);
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      border-radius: 32px;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+      max-width: 1040px;
+      min-height: 720px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.34), rgba(14, 165, 233, 0.16));
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      padding: 30px;
+    }
+
+    .badge {
+      align-items: center;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(196, 181, 253, 0.34);
+      border-radius: 999px;
+      color: #ddd6fe;
+      display: inline-flex;
+      font-size: 0.78rem;
+      font-weight: 900;
+      gap: 8px;
+      letter-spacing: 0.12em;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      text-transform: uppercase;
+    }
+
+    .badge::before {
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 16px #22c55e;
+      content: "";
+      height: 9px;
+      width: 9px;
+    }
+
+    h1 {
+      font-size: clamp(2.25rem, 8vw, 5rem);
+      line-height: 0.95;
+      margin: 0 0 14px;
+    }
+
+    p {
+      color: #cbd5e1;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 0;
+      max-width: 58ch;
+    }
+
+    .chat-panel {
+      padding: 26px;
+    }
+
+    .messages {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 22px;
+      min-height: 190px;
+    }
+
+    .message {
+      border-radius: 22px;
+      line-height: 1.5;
+      max-width: 88%;
+      padding: 14px 16px;
+      white-space: pre-wrap;
+    }
+
+    .user-message {
+      background: rgba(59, 130, 246, 0.22);
+      border: 1px solid rgba(96, 165, 250, 0.34);
+      justify-self: end;
+    }
+
+    .ai-message {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(167, 139, 250, 0.38);
+      box-shadow: inset 0 0 30px rgba(139, 92, 246, 0.08);
+      justify-self: start;
+    }
+
+    .system-message {
+      background: rgba(234, 179, 8, 0.16);
+      border: 1px solid rgba(234, 179, 8, 0.34);
+      color: #fde68a;
+      justify-self: center;
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .speaker {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+    }
+
+    .chat-box {
+      align-items: end;
+      background: rgba(15, 23, 42, 0.74);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 24px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr auto;
+      padding: 12px;
+    }
+
+    textarea {
+      background: transparent;
+      border: 0;
+      color: #f8fafc;
+      font: inherit;
+      min-height: 78px;
+      padding: 10px;
+      resize: vertical;
+      width: 100%;
+    }
+
+    textarea:focus {
+      outline: none;
+    }
+
+    button {
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      border: 0;
+      border-radius: 18px;
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 900;
+      min-width: 112px;
+      padding: 16px 22px;
+      transition: transform 160ms ease, filter 160ms ease;
+    }
+
+    button:disabled {
+      cursor: wait;
+      filter: grayscale(0.4) brightness(0.8);
+    }
+
+    button:not(:disabled):hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .hint {
+      color: #94a3b8;
+      font-size: 0.88rem;
+      margin-top: 12px;
+    }
+
+
+    .app-header {
+      align-items: center;
+      background: rgba(2, 6, 23, 0.72);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 22px;
+    }
+
+    .brand {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+    }
+
+    .brand strong,
+    .chat-toolbar strong {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .brand span,
+    .chat-toolbar span {
+      color: #94a3b8;
+      display: block;
+      font-size: 0.82rem;
+      margin-top: 2px;
+    }
+
+    .logo {
+      align-items: center;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      border-radius: 14px;
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+      display: grid;
+      font-weight: 900;
+      height: 44px;
+      place-items: center;
+      width: 44px;
+    }
+
+    .model-pill,
+    .secure-dot {
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 999px;
+      color: #c4b5fd;
+      font-size: 0.84rem;
+      font-weight: 800;
+      padding: 9px 12px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      min-height: 640px;
+    }
+
+    .sidebar {
+      background: rgba(15, 23, 42, 0.52);
+      border-right: 1px solid rgba(148, 163, 184, 0.16);
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .status-card {
+      background: rgba(2, 6, 23, 0.58);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .status-card span {
+      color: #94a3b8;
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .status-card strong {
+      font-size: 1.05rem;
+    }
+
+    .chat-toolbar {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .secure-dot {
+      color: #86efac;
+    }
+
+    .ai-message,
+    .user-message,
+    .system-message {
+      align-items: flex-start;
+      display: flex;
+      gap: 10px;
+    }
+
+    .user-message {
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      align-items: center;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      border-radius: 14px;
+      display: grid;
+      flex: 0 0 38px;
+      font-size: 0.78rem;
+      font-weight: 950;
+      height: 38px;
+      place-items: center;
+      width: 38px;
+    }
+
+    .bubble {
+      width: 100%;
+    }
+
+    @media (max-width: 820px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .chat-box {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <b>Blocked.</b>
+  <main>
+    <section class="app-header">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">✦</div>
+        <div>
+          <strong>Clipboard AI</strong>
+          <span>Neural assistant workspace</span>
+        </div>
+      </div>
+      <div class="model-pill">Model: ClipGPT-4o</div>
+    </section>
+
+    <section class="workspace">
+      <aside class="sidebar" aria-label="AI session details">
+        <section class="hero">
+          <span class="badge">AI online</span>
+          <h1>Ask your clipboard.</h1>
+          <p>Send a prompt and the assistant will request clipboard access, analyze the copied text, and answer in chat.</p>
+        </section>
+
+        <div class="status-card">
+          <span>Permission mode</span>
+          <strong>Browser gated</strong>
+        </div>
+        <div class="status-card">
+          <span>Data source</span>
+          <strong>Clipboard read</strong>
+        </div>
+        <div class="status-card">
+          <span>Response style</span>
+          <strong>Assistant summary</strong>
+        </div>
+      </aside>
+
+      <section class="chat-panel" aria-label="Clipboard AI chat">
+      <div class="chat-toolbar">
+        <div>
+          <strong>Assistant chat</strong>
+          <span>Clipboard-aware session</span>
+        </div>
+        <span class="secure-dot">Ready</span>
+      </div>
+
+      <section id="messages" class="messages" aria-live="polite">
+        <article class="message ai-message">
+          <div class="avatar" aria-hidden="true">AI</div>
+          <div class="bubble">
+            <span class="speaker">Clipboard AI</span>
+            <span class="text">Hi, I’m ready. Send a prompt and I’ll read your clipboard when your browser allows it.</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="chat-box">
+        <textarea id="userInput" placeholder="Message Clipboard AI..."></textarea>
+        <button id="sendButton" type="button">Send</button>
+      </section>
+      <p class="hint">Clipboard access works only when the browser allows it, usually on HTTPS or localhost after a click.</p>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const userInput = document.querySelector('#userInput');
+    const sendButton = document.querySelector('#sendButton');
+    const messages = document.querySelector('#messages');
+
+    function addMessage(speaker, text, className) {
+      const message = document.createElement('article');
+      message.className = `message ${className}`;
+      const avatarText = speaker === 'You' ? 'You' : 'AI';
+      message.innerHTML = '<div class="avatar" aria-hidden="true"></div><div class="bubble"><span class="speaker"></span><span class="text"></span></div>';
+      message.querySelector('.avatar').textContent = avatarText;
+      message.querySelector('.speaker').textContent = speaker;
+      message.querySelector('.text').textContent = text;
+      messages.append(message);
+      message.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
+    async function readClipboardText() {
+      if (!navigator.clipboard || !navigator.clipboard.readText) {
+        throw new Error('Clipboard reading is not available in this browser.');
+      }
+
+      return navigator.clipboard.readText();
+    }
+
+    async function sendMessage() {
+      const prompt = userInput.value.trim();
+
+      if (!prompt) {
+        userInput.focus();
+        return;
+      }
+
+      addMessage('You', prompt, 'user-message');
+      userInput.value = '';
+      sendButton.disabled = true;
+      sendButton.textContent = 'Reading...';
+
+      try {
+        const clipboardText = await readClipboardText();
+        const answer = clipboardText
+          ? `I checked your clipboard. It says: ${clipboardText}`
+          : 'I checked your clipboard, but it is empty.';
+        addMessage('Clipboard AI', answer, 'ai-message');
+      } catch (error) {
+        addMessage('Clipboard AI', `I tried to read your clipboard, but the browser blocked me. ${error.message}`, 'system-message');
+      } finally {
+        sendButton.disabled = false;
+        sendButton.textContent = 'Send';
+        userInput.focus();
+      }
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+        sendMessage();
+      }
+    });
+  </script>
 </body>
+</html>
