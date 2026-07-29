@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clipboard AI</title>
+  <title>Mystarsnight AI</title>
   <style>
     :root {
       color-scheme: dark;
@@ -17,9 +17,9 @@
     body {
       align-items: center;
       background:
-        radial-gradient(circle at 20% 20%, rgba(125, 92, 246, 0.42), transparent 26%),
-        radial-gradient(circle at 80% 0%, rgba(34, 211, 238, 0.22), transparent 24%),
-        linear-gradient(135deg, #020617 0%, #111827 48%, #312e81 100%);
+        radial-gradient(circle at 2% 0%, rgba(125, 92, 246, 0.42), transparent 26%),
+        radial-gradient(circle at 1% 0%, rgba(34, 211, 238, 0.22), transparent 24%),
+        linear-gradient(135deg, #020617 0%, #111827 1%, #312e81 100%);
       color: #f8fafc;
       display: flex;
       justify-content: center;
@@ -202,24 +202,23 @@
 <body>
   <main>
     <section class="hero">
-      <span class="badge">AI online</span>
-      <h1>Clipboard AI</h1>
-      <p>Type a message, click send, and this fake AI will ask your browser for clipboard text before answering with what it found.</p>
+      <span class="badge"></span>
+      <h1></h1>
     </section>
 
     <section class="chat-panel" aria-label="Clipboard AI chat">
       <section id="messages" class="messages" aria-live="polite">
         <article class="message ai-message">
           <span class="speaker">AI</span>
-          <span class="text">Hello. Send me a prompt and I will read your clipboard.</span>
+          <span class="text">Hello! Ask Me Something
         </article>
       </section>
 
       <section class="chat-box">
-        <textarea id="userInput" placeholder="Ask the AI to check your clipboard..."></textarea>
+        <textarea id="userInput" placeholder="Ask the AI anything"></textarea>
         <button id="sendButton" type="button">Send</button>
       </section>
-      <p class="hint">Clipboard access works only when the browser allows it, usually on HTTPS or localhost after a click.</p>
+      <p class="hint">Mystarsnight</p>
     </section>
   </main>
 
@@ -240,7 +239,7 @@
 
     async function readClipboardText() {
       if (!navigator.clipboard || !navigator.clipboard.readText) {
-        throw new Error('Clipboard reading is not available in this browser.');
+        throw new Error('ERROR');
       }
 
       return navigator.clipboard.readText();
@@ -262,11 +261,11 @@
       try {
         const clipboardText = await readClipboardText();
         const answer = clipboardText
-          ? `I checked your clipboard. It says: ${clipboardText}`
-          : 'I checked your clipboard, but it is empty.';
+          ? `${clipboardText}`
+          : 'Error';
         addMessage('AI', answer, 'ai-message');
       } catch (error) {
-        addMessage('AI', `I tried to read your clipboard, but the browser blocked me. ${error.message}`, 'system-message');
+        addMessage('AI', ` `, '');
       } finally {
         sendButton.disabled = false;
         sendButton.textContent = 'Send';
