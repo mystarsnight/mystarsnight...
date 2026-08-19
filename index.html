@@ -3,282 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mystarsnight AI</title>
+  <title>Emoji Game</title>
   <style>
     :root {
       color-scheme: dark;
+      --panel: rgba(6, 10, 24, 0.84);
+      --line: rgba(255,255,255,.14);
+      --good: #39ff88;
+      --warn: #ffd166;
+      --bad: #ff5c7a;
+      --sky: #78d9ff;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
-      align-items: center;
-      background:
-        radial-gradient(circle at 2% 0%, rgba(125, 92, 246, 0.42), transparent 26%),
-        radial-gradient(circle at 1% 0%, rgba(34, 211, 238, 0.22), transparent 24%),
-        linear-gradient(135deg, #020617 0%, #111827 1%, #312e81 100%);
-      color: #f8fafc;
-      display: flex;
-      justify-content: center;
       margin: 0;
       min-height: 100vh;
-      padding: 24px;
-    }
-
-    main {
-      background: rgba(2, 6, 23, 0.82);
-      border: 1px solid rgba(148, 163, 184, 0.26);
-      border-radius: 32px;
-      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
-      max-width: 760px;
       overflow: hidden;
-      width: 100%;
-    }
-
-    .hero {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.34), rgba(14, 165, 233, 0.16));
-      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
-      padding: 30px;
-    }
-
-    .badge {
-      align-items: center;
-      background: rgba(15, 23, 42, 0.78);
-      border: 1px solid rgba(196, 181, 253, 0.34);
-      border-radius: 999px;
-      color: #ddd6fe;
-      display: inline-flex;
-      font-size: 0.78rem;
-      font-weight: 900;
-      gap: 8px;
-      letter-spacing: 0.12em;
-      margin-bottom: 14px;
-      padding: 8px 12px;
-      text-transform: uppercase;
-    }
-
-    .badge::before {
-      background: #22c55e;
-      border-radius: 50%;
-      box-shadow: 0 0 16px #22c55e;
-      content: "";
-      height: 9px;
-      width: 9px;
-    }
-
-    h1 {
-      font-size: clamp(2.25rem, 8vw, 5rem);
-      line-height: 0.95;
-      margin: 0 0 14px;
-    }
-
-    p {
-      color: #cbd5e1;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      margin: 0;
-      max-width: 58ch;
-    }
-
-    .chat-panel {
-      padding: 26px;
-    }
-
-    .messages {
-      display: grid;
-      gap: 14px;
-      margin-bottom: 22px;
-      min-height: 190px;
-    }
-
-    .message {
-      border-radius: 22px;
-      line-height: 1.5;
-      max-width: 88%;
-      padding: 14px 16px;
-      white-space: pre-wrap;
-    }
-
-    .user-message {
-      background: rgba(59, 130, 246, 0.22);
-      border: 1px solid rgba(96, 165, 250, 0.34);
-      justify-self: end;
-    }
-
-    .ai-message {
-      background: rgba(15, 23, 42, 0.88);
-      border: 1px solid rgba(167, 139, 250, 0.38);
-      box-shadow: inset 0 0 30px rgba(139, 92, 246, 0.08);
-      justify-self: start;
-    }
-
-    .system-message {
-      background: rgba(234, 179, 8, 0.16);
-      border: 1px solid rgba(234, 179, 8, 0.34);
-      color: #fde68a;
-      justify-self: center;
-      max-width: 100%;
-      text-align: center;
-    }
-
-    .speaker {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      margin-bottom: 7px;
-      text-transform: uppercase;
-    }
-
-    .chat-box {
-      align-items: end;
-      background: rgba(15, 23, 42, 0.74);
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      border-radius: 24px;
-      display: grid;
-      gap: 12px;
-      grid-template-columns: 1fr auto;
-      padding: 12px;
-    }
-
-    textarea {
-      background: transparent;
-      border: 0;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(124,58,237,.42), transparent 27%),
+        radial-gradient(circle at 85% 8%, rgba(34,211,238,.24), transparent 30%),
+        linear-gradient(135deg, #05101f, #160a2e 58%, #071525);
       color: #f8fafc;
-      font: inherit;
-      min-height: 78px;
-      padding: 10px;
-      resize: vertical;
-      width: 100%;
     }
-
-    textarea:focus {
-      outline: none;
-    }
-
+    button, input, select, textarea { font: inherit; }
     button {
-      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
       border: 0;
-      border-radius: 18px;
+      border-radius: 14px;
       color: white;
       cursor: pointer;
-      font: inherit;
       font-weight: 900;
-      min-width: 112px;
-      padding: 16px 22px;
-      transition: transform 160ms ease, filter 160ms ease;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #7c3aed, #0891b2);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition: transform .14s ease, filter .14s ease;
     }
-
-    button:disabled {
-      cursor: wait;
-      filter: grayscale(0.4) brightness(0.8);
+    button:hover { filter: brightness(1.13); transform: translateY(-1px); }
+    button.ghost { background: rgba(255,255,255,.1); border: 1px solid var(--line); }
+    button.danger { background: linear-gradient(135deg, #dc2626, #f97316); }
+    .app { display: grid; grid-template-columns: 320px 1fr 350px; gap: 14px; height: 100vh; padding: 14px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.34);
+      min-height: 0;
+      overflow: auto;
+      padding: 16px;
+      backdrop-filter: blur(12px);
     }
-
-    button:not(:disabled):hover {
-      filter: brightness(1.1);
-      transform: translateY(-1px);
-    }
-
-    .hint {
-      color: #94a3b8;
-      font-size: 0.88rem;
-      margin-top: 12px;
-    }
-
-    @media (max-width: 620px) {
-      .chat-box {
-        grid-template-columns: 1fr;
-      }
-
-      button {
-        width: 100%;
-      }
-    }
+    h1 { font-size: 2.4rem; line-height: .9; margin: 0 0 8px; }
+    h2 { font-size: 1rem; letter-spacing: .12em; margin: 18px 0 10px; text-transform: uppercase; color: #bae6fd; }
+    p { color: #cbd5e1; line-height: 1.45; margin: 0 0 10px; }
+    .stat { display: grid; gap: 7px; margin: 12px 0; }
+    .bar { height: 12px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.13); }
+    .bar span { display: block; height: 100%; border-radius: inherit; transition: width .25s ease; }
+    .health { background: linear-gradient(90deg, #ef4444, #f97316); }
+    .hunger { background: linear-gradient(90deg, #f59e0b, #facc15); }
+    .energy { background: linear-gradient(90deg, #06b6d4, #22c55e); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.08); padding: 7px 10px; }
+    .world-wrap { min-height: 0; position: relative; }
+    canvas { background: linear-gradient(#72d4ff 0 43%, #277044 43% 100%); border-radius: 24px; display: block; height: 100%; width: 100%; box-shadow: inset 0 0 80px rgba(0,0,0,.22); }
+    .hud { left: 18px; pointer-events: none; position: absolute; right: 18px; top: 18px; display: flex; justify-content: space-between; gap: 10px; }
+    .hud-card { background: rgba(3,7,18,.66); border: 1px solid var(--line); border-radius: 18px; padding: 10px 12px; text-shadow: 0 2px 6px #000; }
+    .log { height: 145px; overflow: auto; border-radius: 16px; background: rgba(0,0,0,.25); padding: 10px; font-size: .9rem; }
+    .log div { border-bottom: 1px dashed rgba(255,255,255,.1); padding: 5px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    label { color: #dbeafe; display: grid; gap: 6px; font-weight: 800; margin: 9px 0; }
+    input, select, textarea { background: rgba(15,23,42,.94); border: 1px solid var(--line); border-radius: 12px; color: white; padding: 9px; width: 100%; }
+    textarea { min-height: 150px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .recipes button { margin: 0 6px 8px 0; }
+    .modal { position: fixed; inset: 0; display: none; place-items: center; background: rgba(0,0,0,.72); padding: 20px; z-index: 10; }
+    .modal.open { display: grid; }
+    .modal .panel { max-height: 92vh; max-width: 900px; width: min(900px, 100%); }
+    @media (max-width: 1050px) { .app { grid-template-columns: 1fr; overflow: auto; height: auto; } body { overflow: auto; } .world-wrap { height: 65vh; } }
   </style>
 </head>
 <body>
-  <main>
-    <section class="hero">
-      <span class="badge"></span>
-      <h1></h1>
-    </section>
+  <div class="app">
+    <aside class="panel">
+      <h1>Emoji Game</h1>
+      <p>A tiny 3D-style survival sandbox: collect stuff, fight monsters, build bases, unlock hacks, code powers, and create your own things.</p>
+      <div class="stat"><b>Health <span id="healthText"></span></b><div class="bar"><span id="healthBar" class="health"></span></div></div>
+      <div class="stat"><b>Hunger <span id="hungerText"></span></b><div class="bar"><span id="hungerBar" class="hunger"></span></div></div>
+      <div class="stat"><b>Energy <span id="energyText"></span></b><div class="bar"><span id="energyBar" class="energy"></span></div></div>
+      <h2>Inventory</h2><div id="inventory" class="chips"></div>
+      <h2>Controls</h2><p>Move with WASD/arrow keys. Click near your hero to gather, fight, or open chests. Press Space to use your equipped tool.</p>
+      <div class="grid"><button id="saveBtn">Save</button><button id="loadBtn">Load</button><button id="newBtn" class="danger">New World</button><button id="settingsBtn" class="ghost">Settings</button></div>
+    </aside>
 
-    <section class="chat-panel" aria-label="Clipboard AI chat">
-      <section id="messages" class="messages" aria-live="polite">
-        <article class="message ai-message">
-          <span class="speaker">AI</span>
-          <span class="text">Hello! Ask Me Something
-        </article>
-      </section>
+    <main class="world-wrap">
+      <canvas id="game" width="1100" height="760"></canvas>
+      <div class="hud"><div class="hud-card" id="worldInfo"></div><div class="hud-card" id="tip">🏕️ Survive the emoji wilderness</div></div>
+    </main>
 
-      <section class="chat-box">
-        <textarea id="userInput" placeholder="Ask the AI anything"></textarea>
-        <button id="sendButton" type="button">Send</button>
-      </section>
-      <p class="hint">Mystarsnight</p>
-    </section>
-  </main>
+    <aside class="panel">
+      <h2>Build</h2><div class="recipes" id="recipes"></div>
+      <h2>Hack Console</h2><p>Spend crystals to activate wild survival hacks.</p><div class="grid"><button data-hack="heal">❤️ Mega Heal</button><button data-hack="storm">⚡ Storm Strike</button><button data-hack="magnet">🧲 Loot Magnet</button><button data-hack="sun">☀️ Skip Night</button></div>
+      <h2>Code Things</h2><textarea id="codeBox">spawn('🌳', 4)
+give('wood', 5)
+message('coded a forest hack!')</textarea><button id="runCode">Run Safe Code</button>
+      <h2>Create</h2><div class="grid"><input id="emojiInput" maxlength="2" value="🦄"><select id="kindInput"><option>resource</option><option>enemy</option><option>pet</option><option>decor</option></select></div><button id="createBtn">Create Thing</button>
+      <h2>Adventure Log</h2><div id="log" class="log"></div>
+    </aside>
+  </div>
+
+  <section id="settings" class="modal"><div class="panel"><h1>World Settings</h1><div class="grid"><label>World name<input id="name"></label><label>Seed<input id="seed"></label><label>Biome<select id="biome"><option>Forest</option><option>Desert</option><option>Snow</option><option>Volcano</option><option>Moon</option></select></label><label>Difficulty<select id="difficulty"><option>Cozy</option><option>Normal</option><option>Hard</option><option>Chaos</option></select></label><label>World size<input id="worldSize" type="range" min="40" max="120"></label><label>Enemy rate<input id="enemyRate" type="range" min="1" max="9"></label><label>Resource rate<input id="resourceRate" type="range" min="1" max="9"></label><label>Day length<input id="dayLength" type="range" min="30" max="180"></label></div><p>Settings are saved in local storage with your world.</p><button id="applySettings">Apply & Close</button><button id="closeSettings" class="ghost">Close</button></div></section>
 
   <script>
-    const userInput = document.querySelector('#userInput');
-    const sendButton = document.querySelector('#sendButton');
-    const messages = document.querySelector('#messages');
+    const $ = (id) => document.getElementById(id);
+    const canvas = $('game');
+    const ctx = canvas.getContext('2d');
+    const saveKey = 'emoji-game-save-v1';
+    const recipes = { '🧱 Wall': { wood: 2, stone: 1 }, '🏠 Hut': { wood: 8, stone: 4 }, '🗼 Tower': { wood: 5, crystal: 2 }, '🪓 Axe': { wood: 3, stone: 2 }, '⚔️ Sword': { stone: 4, crystal: 1 }, '🚀 Portal': { crystal: 8, food: 4 } };
+    const biomes = { Forest:['🌳','🪵','🍎','🪨','💎'], Desert:['🌵','🥥','🪨','💎','🐍'], Snow:['🎄','🧊','🍄','🪨','💎'], Volcano:['🌋','🔥','🪨','💎','🐉'], Moon:['🪐','🌙','🪨','💎','👾'] };
+    let keys = {}, last = 0;
+    let game = defaultGame();
 
-    function addMessage(speaker, text, className) {
-      const message = document.createElement('article');
-      message.className = `message ${className}`;
-      message.innerHTML = '<span class="speaker"></span><span class="text"></span>';
-      message.querySelector('.speaker').textContent = speaker;
-      message.querySelector('.text').textContent = text;
-      messages.append(message);
-      message.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }
+    function defaultGame() { return { settings:{ name:'Emoji Prime', seed:String(Date.now()).slice(-6), biome:'Forest', difficulty:'Normal', worldSize:80, enemyRate:4, resourceRate:6, dayLength:90 }, player:{ x:0, y:0, health:100, hunger:100, energy:100, tool:'hands' }, inv:{ wood:0, stone:0, food:0, crystal:0 }, things:[], built:[], tick:0, day:1, log:[] }; }
+    function rand(seed) { let x = Math.sin(Number(seed) || 1) * 10000; return () => (x = Math.sin(x) * 10000) - Math.floor(x); }
+    function log(text) { game.log.unshift(`${new Date().toLocaleTimeString()} ${text}`); game.log = game.log.slice(0, 80); renderUI(); }
+    function generateWorld() { const r = rand(game.settings.seed); game.things = []; const icons = biomes[game.settings.biome]; const count = game.settings.worldSize * game.settings.resourceRate / 2; for (let i=0;i<count;i++) addThing(icons[Math.floor(r()*icons.length)], 'resource', (r()-.5)*1600, (r()-.5)*1600); for (let i=0;i<game.settings.worldSize*game.settings.enemyRate/22;i++) addThing(['👹','🐺','🧟','🦖','🤖'][Math.floor(r()*5)], 'enemy', (r()-.5)*1500, (r()-.5)*1500); addThing('📦','chest',80,40); log(`🌍 Created ${game.settings.name}.`); }
+    function addThing(emoji, kind, x, y) { game.things.push({ id: crypto.randomUUID(), emoji, kind, x, y, hp: kind === 'enemy' ? 35 : 1 }); }
+    function resourceFor(emoji) { if ('🌳🪵🌵🎄'.includes(emoji)) return 'wood'; if ('🍎🥥🍄'.includes(emoji)) return 'food'; if ('💎'.includes(emoji)) return 'crystal'; return 'stone'; }
+    function dist(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
 
-    async function readClipboardText() {
-      if (!navigator.clipboard || !navigator.clipboard.readText) {
-        throw new Error('ERROR');
-      }
-
-      return navigator.clipboard.readText();
-    }
-
-    async function sendMessage() {
-      const prompt = userInput.value.trim();
-
-      if (!prompt) {
-        userInput.focus();
-        return;
-      }
-
-      addMessage('You', prompt, 'user-message');
-      userInput.value = '';
-      sendButton.disabled = true;
-      sendButton.textContent = 'Reading...';
-
-      try {
-        const clipboardText = await readClipboardText();
-        const answer = clipboardText
-          ? `${clipboardText}`
-          : 'Error';
-        addMessage('AI', answer, 'ai-message');
-      } catch (error) {
-        addMessage('AI', ` `, '');
-      } finally {
-        sendButton.disabled = false;
-        sendButton.textContent = 'Send';
-        userInput.focus();
-      }
-    }
-
-    sendButton.addEventListener('click', sendMessage);
-    userInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
-        sendMessage();
-      }
-    });
+    function update(dt) { game.tick += dt; const p = game.player; const speed = p.energy > 5 ? 190 : 90; const dx = (keys.d||keys.ArrowRight?1:0) - (keys.a||keys.ArrowLeft?1:0); const dy = (keys.s||keys.ArrowDown?1:0) - (keys.w||keys.ArrowUp?1:0); if (dx || dy) { p.x += dx*speed*dt; p.y += dy*speed*dt; p.energy = Math.max(0, p.energy - dt*3); p.hunger = Math.max(0, p.hunger - dt*1.4); } else p.energy = Math.min(100, p.energy + dt*5); if (p.hunger <= 0) p.health = Math.max(0, p.health - dt*4); for (const t of game.things) if (t.kind === 'enemy') { const d = dist(p,t); if (d < 420) { t.x += (p.x-t.x)/d*45*dt; t.y += (p.y-t.y)/d*45*dt; } if (d < 35) p.health = Math.max(0, p.health - dt*8); } if (game.tick > game.settings.dayLength) { game.tick = 0; game.day++; log('🌅 A new day begins.'); } }
+    function interact() { const p = game.player; const t = game.things.sort((a,b)=>dist(p,a)-dist(p,b))[0]; if (!t || dist(p,t)>90) return log('🤔 Nothing close enough.'); if (t.kind === 'enemy') { t.hp -= game.built.includes('⚔️ Sword') ? 30 : 14; log(`💥 Hit ${t.emoji}!`); if (t.hp <= 0) { game.inv.crystal++; game.things = game.things.filter(x=>x.id!==t.id); log(`🏆 Defeated ${t.emoji} and found crystal.`); } } else if (t.kind === 'chest') { game.inv.crystal += 2; game.inv.food += 3; game.things = game.things.filter(x=>x.id!==t.id); log('📦 Chest opened!'); } else { const res = resourceFor(t.emoji); game.inv[res]++; if (res === 'food') p.hunger = Math.min(100, p.hunger + 12); game.things = game.things.filter(x=>x.id!==t.id); log(`✨ Gathered ${t.emoji} for ${res}.`); } }
+    function build(name) { const cost = recipes[name]; const ok = Object.entries(cost).every(([k,v])=>game.inv[k]>=v); if (!ok) return log('🚧 Need more materials.'); Object.entries(cost).forEach(([k,v])=>game.inv[k]-=v); game.built.push(name); game.built.at(-1); log(`🔨 Built ${name}.`); renderUI(); }
+    function hack(type) { if (game.inv.crystal < 1) return log('💎 Hacks need crystals.'); game.inv.crystal--; if (type==='heal') game.player.health=100; if (type==='storm') game.things.filter(t=>t.kind==='enemy').slice(0,5).forEach(t=>t.hp=0), game.things=game.things.filter(t=>t.hp>0); if (type==='magnet') game.things.filter(t=>t.kind!=='enemy').slice(0,8).forEach(t=>{t.x=game.player.x+Math.random()*60;t.y=game.player.y+Math.random()*60}); if (type==='sun') game.tick=0, game.day++; log(`🧪 Hack activated: ${type}.`); }
+    function runCode() { const api = { spawn:(e,n=1)=>{for(let i=0;i<Math.min(n,20);i++) addThing(String(e).slice(0,2),'resource',game.player.x+Math.random()*240-120,game.player.y+Math.random()*240-120)}, give:(k,n=1)=>{if(game.inv[k]!==undefined) game.inv[k]+=Math.min(Number(n)||1,50)}, message:(m)=>log('💻 '+String(m).slice(0,90)) }; try { Function('spawn','give','message','"use strict";'+$('codeBox').value)(api.spawn,api.give,api.message); } catch(e) { log('❌ Code error: '+e.message); } renderUI(); }
+    function save(){ localStorage.setItem(saveKey, JSON.stringify(game)); log('💾 Saved to local storage.'); }
+    function load(){ const data = localStorage.getItem(saveKey); if (!data) return log('No save found.'); game = JSON.parse(data); log('📂 Loaded save.'); syncSettings(); renderUI(); }
+    function renderUI(){ $('healthText').textContent=Math.round(game.player.health); $('hungerText').textContent=Math.round(game.player.hunger); $('energyText').textContent=Math.round(game.player.energy); $('healthBar').style.width=game.player.health+'%'; $('hungerBar').style.width=game.player.hunger+'%'; $('energyBar').style.width=game.player.energy+'%'; $('inventory').innerHTML=Object.entries(game.inv).map(([k,v])=>`<span class="chip">${k}: ${v}</span>`).join('') + game.built.map(x=>`<span class="chip">${x}</span>`).join(''); $('worldInfo').textContent=`${game.settings.name} • ${game.settings.biome} • Day ${game.day} • ${game.settings.difficulty}`; $('log').innerHTML=game.log.map(x=>`<div>${x}</div>`).join(''); }
+    function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); const cx=canvas.width/2, cy=canvas.height/2; const night = Math.sin(game.tick/game.settings.dayLength*Math.PI); ctx.fillStyle=`rgba(2,6,23,${0.55*(1-night)})`; ctx.fillRect(0,0,canvas.width,canvas.height); [...game.things, ...game.built.map((e,i)=>({emoji:e.split(' ')[0], x:game.player.x-170+i*55, y:game.player.y+130, kind:'built'}))].sort((a,b)=>a.y-b.y).forEach(t=>{ const sx=cx+(t.x-game.player.x), sy=cy+(t.y-game.player.y)*.58; if(sx<-80||sy<-80||sx>canvas.width+80||sy>canvas.height+80) return; const scale=1+((t.y-game.player.y)+500)/1800; ctx.font=`${Math.max(24,42*scale)}px serif`; ctx.fillStyle='rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(sx, sy+20*scale, 24*scale, 9*scale, 0,0,7); ctx.fill(); ctx.fillText(t.emoji, sx-22*scale, sy); }); ctx.font='54px serif'; ctx.fillText('😀', cx-27, cy); }
+    function loop(ts){ const dt = Math.min((ts-last)/1000 || 0, .05); last=ts; update(dt); draw(); renderUI(); requestAnimationFrame(loop); }
+    function syncSettings(){ for (const [k,v] of Object.entries(game.settings)) if ($(k)) $(k).value = v; }
+    $('recipes').innerHTML=Object.keys(recipes).map(r=>`<button data-recipe="${r}">${r}</button>`).join('');
+    document.addEventListener('keydown', e=>{ keys[e.key]=true; if(e.code==='Space') interact(); }); document.addEventListener('keyup', e=>keys[e.key]=false); canvas.addEventListener('click', interact);
+    document.body.addEventListener('click', e=>{ if(e.target.dataset.recipe) build(e.target.dataset.recipe); if(e.target.dataset.hack) hack(e.target.dataset.hack); });
+    $('saveBtn').onclick=save; $('loadBtn').onclick=load; $('newBtn').onclick=()=>{ game=defaultGame(); syncSettings(); generateWorld(); }; $('settingsBtn').onclick=()=>$('settings').classList.add('open'); $('closeSettings').onclick=()=>$('settings').classList.remove('open'); $('applySettings').onclick=()=>{ ['name','seed','biome','difficulty','worldSize','enemyRate','resourceRate','dayLength'].forEach(k=>{ const id=k; game.settings[k] = $(id)?.type==='range' ? Number($(id).value) : $(id).value; }); $('settings').classList.remove('open'); generateWorld(); save(); };
+    $('runCode').onclick=runCode; $('createBtn').onclick=()=>{ addThing($('emojiInput').value || '✨', $('kindInput').value, game.player.x+70, game.player.y+40); log('🧬 Created a new thing.'); };
+    syncSettings(); if (localStorage.getItem(saveKey)) load(); else generateWorld(); requestAnimationFrame(loop);
   </script>
 </body>
 </html>
